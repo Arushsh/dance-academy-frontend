@@ -1,0 +1,122 @@
+<!-- PAGE HERO -->
+<section class="page-hero">
+    <div class="orb orb-purple" style="width:400px;height:400px;top:-150px;right:-100px;"></div>
+    <div class="container">
+        <div class="section-label">📚 Courses</div>
+        <h1 class="hero-title">Our Dance <span class="gradient-text">Courses</span></h1>
+        <p class="hero-subtitle">Professionally crafted curriculum for all levels — from beginner to advanced performer.
+        </p>
+    </div>
+</section>
+
+<!-- COURSE SELECTOR -->
+<section class="section course-section">
+    <div class="container">
+        <div class="course-tabs">
+            <button class="course-tab" *ngFor="let c of courses" [class.active]="selectedCourse?.id === c.id"
+                [style.--tab-color]="c.color" (click)="selectCourse(c)">
+                <span class="tab-emoji">{{c.emoji}}</span>
+                <span class="tab-name">{{c.name}}</span>
+            </button>
+        </div>
+
+        <div class="course-detail" *ngIf="selectedCourse">
+            <div class="course-info glass-card">
+                <div class="course-header">
+                    <div class="course-big-emoji" [style.color]="selectedCourse.color">{{selectedCourse.emoji}}</div>
+                    <div>
+                        <span class="badge badge-purple">{{selectedCourse.level}}</span>
+                        <h2>{{selectedCourse.name}}</h2>
+                        <p>{{selectedCourse.description}}</p>
+                    </div>
+                </div>
+                <div class="course-meta-grid">
+                    <div class="meta-item">
+                        <span class="meta-icon">👩‍🏫</span>
+                        <div>
+                            <div class="meta-label">Trainer</div>
+                            <div class="meta-val">{{selectedCourse.trainer}}</div>
+                        </div>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-icon">⏱️</span>
+                        <div>
+                            <div class="meta-label">Duration</div>
+                            <div class="meta-val">{{selectedCourse.duration}}</div>
+                        </div>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-icon">🎓</span>
+                        <div>
+                            <div class="meta-label">Experience</div>
+                            <div class="meta-val">{{selectedCourse.experience}}</div>
+                        </div>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-icon">💰</span>
+                        <div>
+                            <div class="meta-label">Monthly Fee</div>
+                            <div class="meta-val">₹{{selectedCourse.fees?.monthly}}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="features-section">
+                    <h4>What You'll Learn</h4>
+                    <div class="features-grid">
+                        <div class="feature-item" *ngFor="let feat of selectedCourse.features">✅ {{feat}}</div>
+                    </div>
+                </div>
+                <div class="batch-section">
+                    <h4>Batch Timings</h4>
+                    <div class="batch-tags">
+                        <span class="batch-tag" *ngFor="let b of selectedCourse.batchTimings">🕐 {{b}}</span>
+                    </div>
+                </div>
+                <div class="course-cta">
+                    <a routerLink="/register" class="btn btn-primary">Enroll in {{selectedCourse.name}} →</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FEES STRUCTURE TABLE -->
+<section class="section fees-section">
+    <div class="container">
+        <div class="section-header">
+            <div class="section-label">💳 Pricing</div>
+            <h2 class="section-title">Fees <span class="gradient-text">Structure</span></h2>
+            <p class="section-subtitle">Transparent pricing with no hidden charges. Registration fee is one-time only.
+            </p>
+        </div>
+        <div class="fees-table-wrapper glass-card">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Dance Style</th>
+                        <th>Monthly Fee</th>
+                        <th>Registration (One-Time)</th>
+                        <th>Annual Package</th>
+                        <th>Savings</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let f of feesData">
+                        <td><strong>{{f.type}}</strong></td>
+                        <td class="price-cell">{{f.monthly}}</td>
+                        <td>{{f.registration}}</td>
+                        <td class="price-cell gold-text">{{f.annual}}</td>
+                        <td><span class="badge badge-green">Save 2 months!</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="fees-note">
+            <span>📌</span> Fees include all classroom sessions. Costume and event fees are separate.
+            Sibling discount of 10% available.
+        </div>
+        <div style="text-align:center;margin-top:40px;">
+            <a routerLink="/register" class="btn btn-primary">Register & Enroll Now →</a>
+        </div>
+    </div>
+</section>

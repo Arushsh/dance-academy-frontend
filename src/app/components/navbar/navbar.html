@@ -1,0 +1,45 @@
+<nav class="navbar" [class.scrolled]="isScrolled">
+  <div class="nav-container">
+    <a routerLink="/" class="nav-brand" (click)="closeMobile()">
+      <span class="brand-icon">🎭</span>
+      <div class="brand-text">
+        <span class="brand-name">Rhythm</span>
+        <span class="brand-sub">Dance Academy</span>
+      </div>
+    </a>
+
+    <ul class="nav-links" [class.mobile-open]="isMobileMenuOpen">
+      <li><a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}" (click)="closeMobile()">Home</a></li>
+      <li><a routerLink="/about" routerLinkActive="active" (click)="closeMobile()">About</a></li>
+      <li><a routerLink="/courses" routerLinkActive="active" (click)="closeMobile()">Courses</a></li>
+      <li><a routerLink="/events" routerLinkActive="active" (click)="closeMobile()">Events</a></li>
+      <li *ngIf="!currentUser">
+        <a routerLink="/register" routerLinkActive="active" (click)="closeMobile()">Register</a>
+      </li>
+      <li *ngIf="currentUser && auth.isStudent">
+        <a routerLink="/student-dashboard" routerLinkActive="active" (click)="closeMobile()">Dashboard</a>
+      </li>
+      <li *ngIf="currentUser && auth.isAdmin">
+        <a routerLink="/admin-dashboard" routerLinkActive="active" (click)="closeMobile()">Admin</a>
+      </li>
+    </ul>
+
+    <div class="nav-actions">
+      <ng-container *ngIf="!currentUser">
+        <a routerLink="/login" class="btn btn-secondary btn-sm">Login</a>
+        <a routerLink="/register" class="btn btn-primary btn-sm">Join Now</a>
+      </ng-container>
+      <ng-container *ngIf="currentUser">
+        <div class="user-chip">
+          <div class="user-avatar">{{currentUser.name?.charAt(0)}}</div>
+          <span class="user-name">{{currentUser.name?.split(' ')[0]}}</span>
+        </div>
+        <button class="btn btn-secondary btn-sm" (click)="logout()">Logout</button>
+      </ng-container>
+    </div>
+
+    <button class="mobile-toggle" (click)="toggleMobile()" [class.open]="isMobileMenuOpen">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>

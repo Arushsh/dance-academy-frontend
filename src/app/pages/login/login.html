@@ -1,0 +1,68 @@
+<section class="login-page">
+    <div class="orb orb-purple" style="width:500px;height:500px;top:-200px;right:-150px;"></div>
+    <div class="orb orb-blue" style="width:300px;height:300px;bottom:-100px;left:-100px;"></div>
+    <div class="container">
+        <div class="login-wrapper">
+            <div class="login-left">
+                <div class="brand-mega">🎭</div>
+                <h2>Welcome Back to <span class="gradient-text">Rhythm Academy</span></h2>
+                <p>Login to access your personalized dance dashboard — track your progress, attendance, fees, and
+                    upcoming events.</p>
+                <div class="login-perks">
+                    <div class="perk"><span>📊</span> Track attendance & progress</div>
+                    <div class="perk"><span>💳</span> View fee payment status</div>
+                    <div class="perk"><span>🎪</span> Register for events instantly</div>
+                    <div class="perk"><span>👤</span> Manage your profile</div>
+                </div>
+                <div class="demo-creds glass-card">
+                    <h5>🔑 Demo Credentials</h5>
+                    <p><strong>Student:</strong> priya&#64;example.com / student123</p>
+                    <p><strong>Admin:</strong> admin&#64;danceacademy.com / admin123</p>
+                </div>
+            </div>
+
+            <div class="login-form-wrapper">
+                <div class="login-tabs">
+                    <button id="tab-student" class="login-tab" [class.active]="activeTab === 'student'"
+                        (click)="setTab('student')">
+                        👩‍🎓 Student Login
+                    </button>
+                    <button id="tab-admin" class="login-tab" [class.active]="activeTab === 'admin'"
+                        (click)="setTab('admin')">
+                        🔒 Admin Login
+                    </button>
+                </div>
+
+                <div class="login-card glass-card">
+                    <h3>{{activeTab === 'student' ? 'Student Login' : 'Admin Login'}}</h3>
+                    <p class="login-desc">{{activeTab === 'student' ? 'Access your student dashboard and training
+                        progress.' : 'Manage students, events, and academy operations.'}}</p>
+                    <div class="alert alert-error" *ngIf="error">{{error}}</div>
+                    <div class="form-group">
+                        <label class="form-label">Email Address</label>
+                        <input id="login-email" class="form-control" type="email" placeholder="your@email.com"
+                            [(ngModel)]="email" name="email" />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Password</label>
+                        <div class="input-eye-wrap">
+                            <input id="login-password" class="form-control" [type]="showPassword ? 'text' : 'password'"
+                                placeholder="Your password" [(ngModel)]="password" name="password"
+                                (keyup.enter)="onLogin()" />
+                            <button type="button" class="eye-btn" (click)="showPassword = !showPassword" tabindex="-1">
+                                <span>{{showPassword ? '🙈' : '👁️'}}</span>
+                            </button>
+                        </div>
+                    </div>
+                    <button id="login-submit" class="btn btn-primary" style="width:100%;justify-content:center"
+                        (click)="onLogin()" [disabled]="loading">
+                        {{loading ? '⏳ Logging in...' : '🚀 Login'}}
+                    </button>
+                    <div class="register-prompt" *ngIf="activeTab === 'student'">
+                        New student? <a routerLink="/register">Register here →</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

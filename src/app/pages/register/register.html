@@ -1,0 +1,147 @@
+<section class="register-page">
+    <div class="orb orb-purple" style="width:500px;height:500px;top:-200px;left:-200px;"></div>
+    <div class="orb orb-pink" style="width:400px;height:400px;bottom:-150px;right:-150px;"></div>
+    <div class="container">
+        <div class="register-wrapper">
+            <div class="register-left">
+                <div class="section-label">📝 Registration</div>
+                <h1>Join <span class="gradient-text">Rhythm Academy</span></h1>
+                <p>Begin your dance journey today. Fill out the form to enroll in our world-class dance programs.</p>
+                <div class="register-features">
+                    <div class="rf-item"><span>🎯</span> Expert professional trainers</div>
+                    <div class="rf-item"><span>📅</span> Flexible batch timings</div>
+                    <div class="rf-item"><span>🏆</span> Performance opportunities</div>
+                    <div class="rf-item"><span>💳</span> Affordable monthly fees</div>
+                </div>
+                <div class="step-indicators">
+                    <div class="step-ind" [class.active]="step >= 1" [class.completed]="step > 1">1</div>
+                    <div class="step-line" [class.completed]="step > 1"></div>
+                    <div class="step-ind" [class.active]="step >= 2" [class.completed]="step > 2">2</div>
+                    <div class="step-line" [class.completed]="step > 2"></div>
+                    <div class="step-ind" [class.active]="step >= 3">3</div>
+                </div>
+                <div class="step-labels">
+                    <span [class.active]="step === 1">Account</span>
+                    <span [class.active]="step === 2">Personal</span>
+                    <span [class.active]="step === 3">Course</span>
+                </div>
+            </div>
+
+            <div class="register-form glass-card">
+                <div class="alert alert-error" *ngIf="error">{{error}}</div>
+                <div class="alert alert-success" *ngIf="success">{{success}}</div>
+
+                <!-- STEP 1: Account -->
+                <div *ngIf="step === 1">
+                    <h3 class="step-title">Account Setup</h3>
+                    <div class="form-group">
+                        <label class="form-label">Full Name *</label>
+                        <input id="reg-name" class="form-control" type="text" placeholder="Your full name"
+                            [(ngModel)]="formData.name" name="name" />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email Address *</label>
+                        <input id="reg-email" class="form-control" type="email" placeholder="your@email.com"
+                            [(ngModel)]="formData.email" name="email" />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Password *</label>
+                        <div class="input-eye-wrap">
+                            <input id="reg-password" class="form-control" [type]="showPassword ? 'text' : 'password'"
+                                placeholder="Min 6 characters" [(ngModel)]="formData.password" name="password" />
+                            <button type="button" class="eye-btn" (click)="showPassword = !showPassword" tabindex="-1">
+                                <span>{{showPassword ? '🙈' : '👁️'}}</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Confirm Password *</label>
+                        <div class="input-eye-wrap">
+                            <input id="reg-confirm" class="form-control"
+                                [type]="showConfirmPassword ? 'text' : 'password'" placeholder="Repeat password"
+                                [(ngModel)]="formData.confirmPassword" name="confirmPassword" />
+                            <button type="button" class="eye-btn" (click)="showConfirmPassword = !showConfirmPassword"
+                                tabindex="-1">
+                                <span>{{showConfirmPassword ? '🙈' : '👁️'}}</span>
+                            </button>
+                        </div>
+                    </div>
+                    <button id="step1-next" class="btn btn-primary" style="width:100%" (click)="nextStep()">Next:
+                        Personal Info →</button>
+                </div>
+
+                <!-- STEP 2: Personal -->
+                <div *ngIf="step === 2">
+                    <h3 class="step-title">Personal Information</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Age</label>
+                            <input id="reg-age" class="form-control" type="number" placeholder="Your age"
+                                [(ngModel)]="formData.age" name="age" />
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Gender</label>
+                            <select id="reg-gender" class="form-control" [(ngModel)]="formData.gender" name="gender">
+                                <option value="">Select gender</option>
+                                <option>Male</option>
+                                <option>Female</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Phone Number</label>
+                        <input id="reg-phone" class="form-control" type="tel" placeholder="10-digit mobile number"
+                            [(ngModel)]="formData.phone" name="phone" />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Address</label>
+                        <textarea id="reg-address" class="form-control" rows="3" placeholder="City, State"
+                            [(ngModel)]="formData.address" name="address"></textarea>
+                    </div>
+                    <div class="form-row btn-row">
+                        <button class="btn btn-secondary" (click)="prevStep()">← Back</button>
+                        <button id="step2-next" class="btn btn-primary" (click)="nextStep()">Next: Course Selection
+                            →</button>
+                    </div>
+                </div>
+
+                <!-- STEP 3: Course -->
+                <div *ngIf="step === 3">
+                    <h3 class="step-title">Course Selection</h3>
+                    <div class="form-group">
+                        <label class="form-label">Dance Type *</label>
+                        <select id="reg-danceType" class="form-control" [(ngModel)]="formData.danceType"
+                            name="danceType" (change)="onDanceTypeChange()">
+                            <option value="">Choose a dance style</option>
+                            <option>Classical</option>
+                            <option>Bollywood</option>
+                            <option>Hip-Hop</option>
+                            <option>Contemporary</option>
+                        </select>
+                    </div>
+                    <div class="form-group" *ngIf="formData.danceType">
+                        <label class="form-label">Batch Timing *</label>
+                        <select id="reg-batchTiming" class="form-control" [(ngModel)]="formData.batchTiming"
+                            name="batchTiming">
+                            <option value="">Select preferred timing</option>
+                            <option *ngFor="let b of batchTimings">{{b}}</option>
+                        </select>
+                    </div>
+                    <div class="course-preview glass-card" *ngIf="formData.danceType">
+                        <p>✅ You selected: <strong>{{formData.danceType}} Dance</strong></p>
+                        <p *ngIf="formData.batchTiming">⏰ Batch: <strong>{{formData.batchTiming}}</strong></p>
+                    </div>
+                    <div class="form-row btn-row">
+                        <button class="btn btn-secondary" (click)="prevStep()">← Back</button>
+                        <button id="register-submit" class="btn btn-primary" (click)="onSubmit()" [disabled]="loading">
+                            {{loading ? '⏳ Registering...' : '🎉 Complete Registration'}}
+                        </button>
+                    </div>
+                </div>
+
+                <p class="login-link">Already enrolled? <a routerLink="/login">Login here</a></p>
+            </div>
+        </div>
+    </div>
+</section>

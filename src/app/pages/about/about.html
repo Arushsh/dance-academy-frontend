@@ -1,0 +1,92 @@
+<!-- PAGE HERO -->
+<section class="page-hero">
+    <div class="orb orb-purple" style="width:400px;height:400px;top:-150px;right:-100px;"></div>
+    <div class="container">
+        <div class="section-label">🎭 Our Story</div>
+        <h1 class="hero-title">About <span class="gradient-text">Rhythm Academy</span></h1>
+        <p class="hero-subtitle">Over 15 years of transforming lives through the art of dance.</p>
+    </div>
+</section>
+
+<!-- MISSION & VISION -->
+<section class="section mission-section">
+    <div class="container">
+        <div class="mission-grid">
+            <div class="mission-card glass-card">
+                <div class="mission-icon">🎯</div>
+                <h3>Our Mission</h3>
+                <p>To provide world-class dance education that transforms students through discipline, creativity, and
+                    the universal language of movement — making dance accessible to all ages and skill levels.</p>
+            </div>
+            <div class="mission-card glass-card vision">
+                <div class="mission-icon">🌟</div>
+                <h3>Our Vision</h3>
+                <p>To be the premier dance academy in India — nurturing the next generation of extraordinary performers,
+                    choreographers, and dance educators who carry forward the legacy of Indian dance traditions.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- TIMELINE -->
+<section class="section timeline-section">
+    <div class="container">
+        <div class="section-header">
+            <div class="section-label">📅 Our Journey</div>
+            <h2 class="section-title">Academy <span class="gradient-text">History</span></h2>
+        </div>
+        <div class="timeline">
+            <div class="timeline-item" *ngFor="let m of milestones; let i = index" [class.right]="i % 2 !== 0">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content glass-card">
+                    <div class="timeline-year">{{m.year}}</div>
+                    <h4>{{m.title}}</h4>
+                    <p>{{m.desc}}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- TRAINERS -->
+<section class="section trainers-section">
+    <div class="container">
+        <div class="section-header">
+            <div class="section-label">👨‍🏫 Our Team</div>
+            <h2 class="section-title">Expert <span class="gradient-text">Trainers</span></h2>
+            <p class="section-subtitle">Our faculty brings decades of professional experience to every class.</p>
+        </div>
+        <div class="trainers-grid">
+            <div class="trainer-card glass-card" *ngFor="let t of trainers">
+                <div class="trainer-avatar">{{t.icon}}</div>
+                <h3 class="trainer-name">{{t.name}}</h3>
+                <div class="trainer-role">{{t.role}}</div>
+                <div class="trainer-exp badge badge-purple">{{t.exp}} experience</div>
+                <div class="trainer-styles">
+                    <span class="style-tag" *ngFor="let s of t.styles">{{s}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- VALUES -->
+<section class="section values-section">
+    <div class="container">
+        <div class="section-header">
+            <div class="section-label">💎 Core Values</div>
+            <h2 class="section-title">What We <span class="gradient-text">Stand For</span></h2>
+        </div>
+        <div class="values-grid">
+            <div class="value-card glass-card" *ngFor="let v of values">
+                <div class="value-icon">{{v.icon}}</div>
+                <h4>{{v.title}}</h4>
+                <p>{{v.desc}}</p>
+            </div>
+        </div>
+        <div class="cta-bar">
+            <h3>Ready to join our dance family?</h3>
+            <a routerLink="/register" class="btn btn-primary">Enroll Today →</a>
+        </div>
+    </div>
+</section>

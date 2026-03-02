@@ -1,0 +1,139 @@
+.login-page {
+    min-height: 100vh;
+    padding: 100px 0 80px;
+    background: var(--gradient-hero);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+}
+
+.login-wrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+}
+
+.brand-mega {
+    font-size: 5rem;
+    margin-bottom: 20px;
+    display: block;
+}
+
+.login-left h2 {
+    font-size: clamp(1.6rem, 2.5vw, 2rem);
+    margin-bottom: 16px;
+}
+
+.login-left>p {
+    color: var(--text-secondary);
+    line-height: 1.8;
+    margin-bottom: 28px;
+}
+
+.login-perks {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 28px;
+}
+
+.perk {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.perk span {
+    font-size: 1.1rem;
+}
+
+.demo-creds {
+    padding: 20px 24px;
+}
+
+.demo-creds h5 {
+    font-size: 0.875rem;
+    margin-bottom: 12px;
+    color: var(--accent-gold);
+}
+
+.demo-creds p {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+}
+
+.login-tabs {
+    display: flex;
+    gap: 4px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 50px;
+    padding: 4px;
+    margin-bottom: 24px;
+}
+
+.login-tab {
+    flex: 1;
+    padding: 12px 20px;
+    background: none;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    color: var(--text-muted);
+    transition: var(--transition);
+}
+
+.login-tab.active {
+    background: var(--gradient-accent);
+    color: #fff;
+}
+
+.login-card {
+    padding: 40px;
+}
+
+.login-card h3 {
+    font-size: 1.4rem;
+    margin-bottom: 8px;
+}
+
+.login-desc {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin-bottom: 28px;
+}
+
+.register-prompt {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 0.875rem;
+    color: var(--text-muted);
+}
+
+.register-prompt a {
+    color: var(--accent-purple);
+}
+
+@media (max-width: 768px) {
+    .login-wrapper {
+        grid-template-columns: 1fr;
+    }
+
+    .login-left {
+        display: none;
+    }
+
+    .login-card {
+        padding: 28px;
+    }
+}

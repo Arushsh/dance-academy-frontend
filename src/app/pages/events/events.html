@@ -1,0 +1,71 @@
+<!-- PAGE HERO -->
+<section class="page-hero">
+    <div class="orb orb-pink" style="width:400px;height:400px;top:-150px;right:-100px;"></div>
+    <div class="container">
+        <div class="section-label">🎪 Events</div>
+        <h1 class="hero-title">Upcoming <span class="gradient-text">Events</span></h1>
+        <p class="hero-subtitle">Performances, workshops, and competitions — be part of the action!</p>
+    </div>
+</section>
+
+<!-- EVENTS LIST -->
+<section class="section events-section">
+    <div class="container">
+        <div class="events-grid">
+            <div class="event-card glass-card" *ngFor="let event of events">
+                <div class="event-header">
+                    <span [class]="'badge ' + getCategoryColor(event.category)">{{event.category}}</span>
+                    <div class="event-date-badge">
+                        <div class="date-day">{{event.date | date:'dd'}}</div>
+                        <div class="date-month">{{event.date | date:'MMM'}}</div>
+                    </div>
+                </div>
+                <div class="event-emoji-lg">🎭</div>
+                <h3>{{event.title}}</h3>
+                <p class="event-desc">{{event.description}}</p>
+                <div class="event-info-list">
+                    <div class="event-info-item"><span>⏰</span> {{event.time}}</div>
+                    <div class="event-info-item"><span>📍</span> {{event.venue}}</div>
+                    <div class="event-info-item"><span>👥</span> Max {{event.maxParticipants}} participants</div>
+                </div>
+                <div class="event-actions">
+                    <button class="btn btn-primary btn-sm" (click)="openEventDetail(event)">View Details</button>
+                    <button class="btn btn-secondary btn-sm" (click)="registerForEvent(event._id)">Register →</button>
+                </div>
+            </div>
+        </div>
+        <div class="no-events" *ngIf="events.length === 0">
+            <span>🎭</span>
+            <p>No upcoming events at the moment. Check back soon!</p>
+        </div>
+    </div>
+</section>
+
+<!-- EVENT DETAIL MODAL -->
+<div class="modal-overlay" *ngIf="selectedEvent" (click)="closeModal()">
+    <div class="modal-box glass-card" (click)="$event.stopPropagation()">
+        <button class="modal-close" (click)="closeModal()">✕</button>
+        <div class="modal-header">
+            <span [class]="'badge ' + getCategoryColor(selectedEvent.category)">{{selectedEvent.category}}</span>
+            <h2>{{selectedEvent.title}}</h2>
+        </div>
+        <div class="modal-body">
+            <p>{{selectedEvent.description}}</p>
+            <div class="modal-details">
+                <div class="modal-detail"><strong>📅 Date:</strong> {{selectedEvent.date | date:'MMMM dd, yyyy'}}</div>
+                <div class="modal-detail"><strong>⏰ Time:</strong> {{selectedEvent.time}}</div>
+                <div class="modal-detail"><strong>📍 Venue:</strong> {{selectedEvent.venue}}</div>
+                <div class="modal-detail"><strong>👥 Capacity:</strong> {{selectedEvent.maxParticipants}} participants
+                </div>
+            </div>
+            <div class="alert alert-error" *ngIf="registerError">{{registerError}}</div>
+            <div class="alert alert-success" *ngIf="registerMessage">{{registerMessage}}</div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" (click)="registerForEvent(selectedEvent._id)" [disabled]="loading">
+                {{loading ? 'Registering...' : 'Register for this Event →'}}
+            </button>
+            <a routerLink="/login" class="btn btn-secondary" *ngIf="!auth.isLoggedIn">Login to Register</a>
+        </div>
+    </div>
+</div>

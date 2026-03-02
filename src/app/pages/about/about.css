@@ -1,0 +1,261 @@
+.page-hero {
+    padding: 160px 0 80px;
+    background: var(--gradient-hero);
+    position: relative;
+    overflow: hidden;
+}
+
+.page-hero .hero-title {
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    margin: 16px 0 20px;
+}
+
+.page-hero .hero-subtitle {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    max-width: 500px;
+}
+
+.mission-section {
+    background: var(--bg-secondary);
+}
+
+.mission-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+}
+
+.mission-card {
+    padding: 48px;
+    text-align: center;
+}
+
+.mission-card.vision {
+    border-color: rgba(232, 184, 109, 0.3);
+}
+
+.mission-icon {
+    font-size: 3rem;
+    margin-bottom: 20px;
+}
+
+.mission-card h3 {
+    font-size: 1.5rem;
+    margin-bottom: 16px;
+}
+
+.mission-card p {
+    color: var(--text-secondary);
+    line-height: 1.8;
+}
+
+/* TIMELINE */
+.timeline {
+    position: relative;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--border-accent);
+}
+
+.timeline-item {
+    display: flex;
+    justify-content: flex-end;
+    padding-right: calc(50% + 40px);
+    margin-bottom: 40px;
+    position: relative;
+}
+
+.timeline-item.right {
+    justify-content: flex-start;
+    padding-right: 0;
+    padding-left: calc(50% + 40px);
+}
+
+.timeline-dot {
+    position: absolute;
+    left: 50%;
+    top: 24px;
+    transform: translateX(-50%);
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--gradient-accent);
+    border: 3px solid var(--bg-primary);
+    z-index: 1;
+}
+
+.timeline-content {
+    padding: 24px 28px;
+    flex: 1;
+}
+
+.timeline-year {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--accent-purple);
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+}
+
+.timeline-content h4 {
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+}
+
+.timeline-content p {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+}
+
+/* TRAINERS */
+.trainers-section {
+    background: var(--bg-secondary);
+}
+
+.trainers-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+}
+
+.trainer-card {
+    padding: 36px 28px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.trainer-avatar {
+    font-size: 3.5rem;
+    width: 80px;
+    height: 80px;
+    background: var(--bg-card);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--border-accent);
+}
+
+.trainer-name {
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.trainer-role {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.trainer-styles {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: center;
+    margin-top: 8px;
+}
+
+.style-tag {
+    font-size: 0.7rem;
+    padding: 3px 10px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border);
+    border-radius: 50px;
+    color: var(--text-muted);
+}
+
+/* VALUES */
+.values-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-bottom: 64px;
+}
+
+.value-card {
+    padding: 32px;
+}
+
+.value-icon {
+    font-size: 2rem;
+    margin-bottom: 16px;
+}
+
+.value-card h4 {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+}
+
+.value-card p {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+}
+
+.cta-bar {
+    background: var(--bg-card);
+    border: 1px solid var(--border-accent);
+    border-radius: var(--radius-lg);
+    padding: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+}
+
+.cta-bar h3 {
+    font-size: 1.5rem;
+}
+
+@media (max-width: 1024px) {
+    .trainers-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .mission-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .values-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .trainers-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .timeline::before {
+        left: 20px;
+    }
+
+    .timeline-item,
+    .timeline-item.right {
+        padding: 0 0 0 60px;
+        justify-content: flex-start;
+    }
+
+    .timeline-dot {
+        left: 20px;
+    }
+
+    .cta-bar {
+        flex-direction: column;
+        text-align: center;
+    }
+}

@@ -1,0 +1,200 @@
+<div class="dashboard">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sidebar-user">
+            <div class="avatar">{{user?.name?.charAt(0)}}</div>
+            <div>
+                <div class="sb-name">{{user?.name}}</div>
+                <div class="sb-role badge badge-purple">Student</div>
+            </div>
+        </div>
+        <nav class="sidebar-nav">
+            <button class="sb-link" [class.active]="activeTab === 'profile'" (click)="setTab('profile')">👤
+                Profile</button>
+            <button class="sb-link" [class.active]="activeTab === 'attendance'" (click)="setTab('attendance')">📅
+                Attendance</button>
+            <button class="sb-link" [class.active]="activeTab === 'fees'" (click)="setTab('fees')">💳 Fee
+                Status</button>
+            <button class="sb-link" [class.active]="activeTab === 'events'" (click)="setTab('events')">🎪 My
+                Events</button>
+        </nav>
+        <button class="sb-logout" (click)="logout()">🚪 Logout</button>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="dash-content">
+        <div class="alert alert-success" *ngIf="successMsg">{{successMsg}}</div>
+
+        <!-- PROFILE TAB -->
+        <div *ngIf="activeTab === 'profile'">
+            <div class="dash-header">
+                <h2>My <span class="gradient-text">Profile</span></h2>
+                <button class="btn btn-secondary btn-sm" (click)="editMode = !editMode">{{editMode ? 'Cancel' : '✏️ Edit
+                    Profile'}}</button>
+            </div>
+            <div class="profile-grid">
+                <div class="profile-card glass-card">
+                    <div class="profile-avatar">{{user?.name?.charAt(0)}}</div>
+                    <h3>{{user?.name}}</h3>
+                    <p class="profile-email">{{user?.email}}</p>
+                    <div class="profile-badges">
+                        <span class="badge badge-gold">{{user?.danceType}}</span>
+                        <span class="badge badge-blue">{{user?.batchTiming}}</span>
+                    </div>
+                    <div class="profile-joining">Joined: {{user?.joiningDate | date:'MMMM yyyy'}}</div>
+                </div>
+                <div class="profile-details glass-card">
+                    <h4>Personal Information</h4>
+                    <div class="details-grid" *ngIf="!editMode">
+                        <div class="detail-row"><span>Age</span><strong>{{user?.age || '—'}}</strong></div>
+                        <div class="detail-row"><span>Gender</span><strong>{{user?.gender || '—'}}</strong></div>
+                        <div class="detail-row"><span>Phone</span><strong>{{user?.phone || '—'}}</strong></div>
+                        <div class="detail-row"><span>Dance Style</span><strong>{{user?.danceType || '—'}}</strong>
+                        </div>
+                        <div class="detail-row"><span>Batch Timing</span><strong>{{user?.batchTiming || '—'}}</strong>
+                        </div>
+                        <div class="detail-row"><span>Address</span><strong>{{user?.address || '—'}}</strong></div>
+                    </div>
+                    <div *ngIf="editMode" class="edit-form">
+                        <div class="form-group"><label class="form-label">Name</label><input id="edit-name"
+                                class="form-control" [(ngModel)]="editData.name" /></div>
+                        <div class="form-group"><label class="form-label">Phone</label><input id="edit-phone"
+                                class="form-control" [(ngModel)]="editData.phone" /></div>
+                        <div class="form-group"><label class="form-label">Address</label><input id="edit-address"
+                                class="form-control" [(ngModel)]="editData.address" /></div>
+                        <button class="btn btn-primary btn-sm" (click)="saveProfile()">Save Changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ATTENDANCE TAB -->
+        <div *ngIf="activeTab === 'attendance'">
+            <div class="dash-header">
+                <h2>My <span class="gradient-text">Attendance</span></h2>
+            </div>
+            <div class="stats-row" *ngIf="attendance">
+                <div class="stat-card glass-card">
+                    <div class="sc-val">{{attendance.stats.total}}</div>
+                    <div class="sc-label">Total Classes</div>
+                </div>
+                <div class="stat-card glass-card green">
+                    <div class="sc-val">{{attendance.stats.present}}</div>
+                    <div class="sc-label">Present</div>
+                </div>
+                <div class="stat-card glass-card red">
+                    <div class="sc-val">{{attendance.stats.absent}}</div>
+                    <div class="sc-label">Absent</div>
+                </div>
+                <div class="stat-card glass-card purple">
+                    <div class="sc-val">{{attendance.stats.percentage}}%</div>
+                    <div class="sc-label">Attendance Rate</div>
+                </div>
+            </div>
+            <div class="attendance-bar glass-card" *ngIf="attendance">
+                <div class="pbar-label">Attendance: {{attendance.stats.percentage}}%</div>
+                <div class="pbar-track">
+                    <div class="pbar-fill" [style.width]="attendance.stats.percentage + '%'"></div>
+                </div>
+            </div>
+            <div class="glass-card table-card" *ngIf="attendance">
+                <h4>Recent Classes</h4>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let a of attendance.attendance; let i = index">
+                            <td>{{i+1}}</td>
+                            <td>{{a.date | date:'EEE, MMM dd yyyy'}}</td>
+                            <td><span
+                                    [class]="'badge ' + (a.status === 'Present' ? 'badge-green' : 'badge-red')">{{a.status}}</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- FEES TAB -->
+        <div *ngIf="activeTab === 'fees'">
+            <div class="dash-header">
+                <h2>Fee <span class="gradient-text">Status</span></h2>
+            </div>
+
+            <!-- FEES SUMMARY CARDS -->
+            <div class="fees-summary-row" *ngIf="fees">
+                <div class="fee-sum-card glass-card red">
+                    <div class="fee-sum-icon">⚠️</div>
+                    <div class="fee-sum-val">₹{{pendingFeesTotal}}</div>
+                    <div class="fee-sum-label">Pending / Remaining Amount</div>
+                </div>
+                <div class="fee-sum-card glass-card green">
+                    <div class="fee-sum-icon">✅</div>
+                    <div class="fee-sum-val">₹{{paidFeesTotal}}</div>
+                    <div class="fee-sum-label">Total Paid So Far</div>
+                </div>
+                <div class="fee-sum-card glass-card purple">
+                    <div class="fee-sum-icon">📋</div>
+                    <div class="fee-sum-val">{{fees.pendingCount}}</div>
+                    <div class="fee-sum-label">Pending Installments</div>
+                </div>
+            </div>
+
+            <div class="fees-alert" *ngIf="fees?.pendingCount > 0">
+                ⚠️ You have <strong>{{fees.pendingCount}}</strong> pending payment(s) totalling
+                <strong>₹{{pendingFeesTotal}}</strong>. Please clear as soon as possible.
+            </div>
+            <div class="glass-card table-card" *ngIf="fees">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Month</th>
+                            <th>Amount</th>
+                            <th>Method</th>
+                            <th>Status</th>
+                            <th>Paid On</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let p of fees.payments">
+                            <td>{{p.month}} {{p.year}}</td>
+                            <td>₹{{p.amount}}</td>
+                            <td>{{p.paymentMethod}}</td>
+                            <td><span
+                                    [class]="'badge ' + (p.status === 'Paid' ? 'badge-green' : p.status === 'Overdue' ? 'badge-red' : 'badge-gold')">{{p.status}}</span>
+                            </td>
+                            <td>{{p.paymentDate ? (p.paymentDate | date:'dd MMM yyyy') : '—'}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- EVENTS TAB -->
+        <div *ngIf="activeTab === 'events'">
+            <div class="dash-header">
+                <h2>My <span class="gradient-text">Events</span></h2>
+            </div>
+            <div class="events-list" *ngIf="myEvents.length > 0">
+                <div class="event-row glass-card" *ngFor="let e of myEvents">
+                    <div class="event-icon">🎭</div>
+                    <div>
+                        <h4>{{e.title}}</h4>
+                        <p>{{e.date | date:'MMMM dd, yyyy'}} · {{e.venue}}</p>
+                    </div>
+                    <span class="badge badge-green">Registered</span>
+                </div>
+            </div>
+            <div class="empty-state" *ngIf="myEvents.length === 0">
+                <span>🎪</span>
+                <p>You haven't registered for any events yet.</p>
+                <a href="/events" class="btn btn-primary btn-sm">Browse Events</a>
+            </div>
+        </div>
+    </main>
+</div>

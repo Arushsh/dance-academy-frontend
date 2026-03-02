@@ -1,0 +1,322 @@
+<div class="dashboard">
+    <!-- SIDEBAR -->
+    <aside class="sidebar admin-sidebar">
+        <div class="sidebar-user">
+            <div class="avatar admin">🔒</div>
+            <div>
+                <div class="sb-name">{{auth.currentUser?.name}}</div>
+                <div class="sb-role badge badge-gold">Admin</div>
+            </div>
+        </div>
+        <nav class="sidebar-nav">
+            <button class="sb-link" [class.active]="activeTab === 'stats'" (click)="setTab('stats')">📊
+                Dashboard</button>
+            <button class="sb-link" [class.active]="activeTab === 'students'" (click)="setTab('students')">👩‍🎓
+                Students</button>
+            <button class="sb-link" [class.active]="activeTab === 'events'" (click)="setTab('events')">🎪
+                Events</button>
+            <button class="sb-link" [class.active]="activeTab === 'payments'" (click)="setTab('payments')">💳
+                Payments</button>
+            <button class="sb-link" [class.active]="activeTab === 'gallery'" (click)="setTab('gallery')">🖼️
+                Gallery</button>
+            <button class="sb-link" (click)="exportStudents()">⬇️ Export CSV</button>
+        </nav>
+        <button class="sb-logout" (click)="logout()">🚪 Logout</button>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="dash-content">
+        <div class="alert alert-success" *ngIf="successMsg">{{successMsg}}</div>
+
+        <!-- STATS TAB -->
+        <div *ngIf="activeTab === 'stats'">
+            <div class="dash-header">
+                <h2>Admin <span class="gradient-text">Dashboard</span></h2>
+            </div>
+            <div class="admin-stats-grid" *ngIf="stats">
+                <div class="asc glass-card">
+                    <div class="asc-icon">👩‍🎓</div>
+                    <div class="asc-val">{{stats.totalStudents}}</div>
+                    <div class="asc-label">Total Students</div>
+                </div>
+                <div class="asc glass-card green">
+                    <div class="asc-icon">✅</div>
+                    <div class="asc-val">{{stats.activeStudents}}</div>
+                    <div class="asc-label">Active Students</div>
+                </div>
+                <div class="asc glass-card blue">
+                    <div class="asc-icon">🎪</div>
+                    <div class="asc-val">{{stats.upcomingEvents}}</div>
+                    <div class="asc-label">Upcoming Events</div>
+                </div>
+                <div class="asc glass-card red">
+                    <div class="asc-icon">⚠️</div>
+                    <div class="asc-val">{{stats.pendingPayments}}</div>
+                    <div class="asc-label">Pending Payments</div>
+                </div>
+            </div>
+            <div class="batch-overview glass-card" *ngIf="stats">
+                <h4>Students by Dance Style</h4>
+                <div class="dance-stat-row" *ngFor="let d of stats.danceTypeStats">
+                    <span class="ds-label">{{d._id || 'Unassigned'}}</span>
+                    <div class="ds-bar-track">
+                        <div class="ds-bar-fill" [style.width]="(d.count / stats.totalStudents * 100) + '%'"></div>
+                    </div>
+                    <span class="ds-count">{{d.count}}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- STUDENTS TAB (Enhanced) -->
+        <div *ngIf="activeTab === 'students'">
+            <div class="dash-header">
+                <h2>Manage <span class="gradient-text">Students</span></h2>
+                <span class="badge badge-purple">{{filteredStudents.length}} of {{students.length}}</span>
+            </div>
+
+            <!-- Search bar -->
+            <div class="student-search-bar glass-card">
+                <span class="search-icon">🔍</span>
+                <input id="student-search" class="search-input" type="text"
+                    placeholder="Search by name, email or dance style..." [(ngModel)]="studentFilter" />
+                <button class="btn btn-secondary btn-sm" *ngIf="studentFilter" (click)="studentFilter = ''">✕
+                    Clear</button>
+            </div>
+
+            <div class="glass-card table-card">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Student</th>
+                            <th>Dance Type</th>
+                            <th>Batch</th>
+                            <th>Phone</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- NORMAL ROW -->
+                        <tr *ngFor="let s of filteredStudents" [class.editing-row]="editingStudentId === s._id">
+                            <ng-container *ngIf="editingStudentId !== s._id">
+                                <td>
+                                    <div class="student-cell">
+                                        <div class="student-avatar-sm">{{s.name?.charAt(0)}}</div>
+                                        <div>
+                                            <strong>{{s.name}}</strong>
+                                            <div class="student-email">{{s.email}}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td><span class="badge badge-purple">{{s.danceType || '—'}}</span></td>
+                                <td class="batch-cell">{{s.batchTiming || '—'}}</td>
+                                <td>{{s.phone || '—'}}</td>
+                                <td><span [class]="'badge ' + (s.isActive ? 'badge-green' : 'badge-red')">{{s.isActive ?
+                                        'Active' : 'Inactive'}}</span></td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="btn btn-secondary btn-sm" (click)="startEditStudent(s)">✏️
+                                            Edit</button>
+                                        <button class="btn btn-secondary btn-sm"
+                                            (click)="toggleStudentStatus(s)">{{s.isActive ? 'Deactivate' :
+                                            'Activate'}}</button>
+                                        <button class="btn btn-danger btn-sm"
+                                            (click)="deleteStudent(s._id)">🗑️</button>
+                                    </div>
+                                </td>
+                            </ng-container>
+                            <!-- INLINE EDIT ROW -->
+                            <ng-container *ngIf="editingStudentId === s._id">
+                                <td colspan="6">
+                                    <div class="inline-edit-row">
+                                        <div class="inline-edit-fields">
+                                            <input class="form-control form-control-sm" placeholder="Name"
+                                                [(ngModel)]="editStudentData.name" />
+                                            <input class="form-control form-control-sm" placeholder="Phone"
+                                                [(ngModel)]="editStudentData.phone" />
+                                            <select class="form-control form-control-sm"
+                                                [(ngModel)]="editStudentData.danceType">
+                                                <option>Classical</option>
+                                                <option>Bollywood</option>
+                                                <option>Hip-Hop</option>
+                                                <option>Contemporary</option>
+                                            </select>
+                                            <select class="form-control form-control-sm"
+                                                [(ngModel)]="editStudentData.isActive">
+                                                <option [ngValue]="true">Active</option>
+                                                <option [ngValue]="false">Inactive</option>
+                                            </select>
+                                        </div>
+                                        <div class="inline-edit-actions">
+                                            <button class="btn btn-primary btn-sm" (click)="saveEditStudent(s)">✅
+                                                Save</button>
+                                            <button class="btn btn-secondary btn-sm"
+                                                (click)="cancelEditStudent()">Cancel</button>
+                                        </div>
+                                    </div>
+                                </td>
+                            </ng-container>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="empty-state" *ngIf="filteredStudents.length === 0">
+                    <span>👩‍🎓</span>
+                    <p>{{studentFilter ? 'No students match your search.' : 'No students enrolled yet.'}}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- EVENTS TAB -->
+        <div *ngIf="activeTab === 'events'">
+            <div class="dash-header">
+                <h2>Manage <span class="gradient-text">Events</span></h2>
+                <button class="btn btn-primary btn-sm" (click)="showAddEvent = !showAddEvent">{{showAddEvent ? '✕
+                    Cancel' : '+ Add Event'}}</button>
+            </div>
+            <div class="add-event-form glass-card" *ngIf="showAddEvent">
+                <h4>Create New Event</h4>
+                <div class="form-row2">
+                    <div class="form-group"><label class="form-label">Title</label><input id="ev-title"
+                            class="form-control" [(ngModel)]="newEvent.title" placeholder="Event title" /></div>
+                    <div class="form-group"><label class="form-label">Date</label><input id="ev-date"
+                            class="form-control" type="date" [(ngModel)]="newEvent.date" /></div>
+                </div>
+                <div class="form-group"><label class="form-label">Description</label><textarea class="form-control"
+                        rows="2" [(ngModel)]="newEvent.description" placeholder="Event description..."></textarea></div>
+                <div class="form-row2">
+                    <div class="form-group"><label class="form-label">Venue</label><input class="form-control"
+                            [(ngModel)]="newEvent.venue" placeholder="Venue" /></div>
+                    <div class="form-group"><label class="form-label">Time</label><input class="form-control"
+                            [(ngModel)]="newEvent.time" placeholder="e.g. 5:00 PM" /></div>
+                </div>
+                <div class="form-row2">
+                    <div class="form-group">
+                        <label class="form-label">Category</label>
+                        <select class="form-control" [(ngModel)]="newEvent.category">
+                            <option>Competition</option>
+                            <option>Performance</option>
+                            <option>Workshop</option>
+                            <option>Festival</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label class="form-label">Max Participants</label><input
+                            class="form-control" type="number" [(ngModel)]="newEvent.maxParticipants" /></div>
+                </div>
+                <button id="create-event-btn" class="btn btn-primary btn-sm" (click)="createEvent()">Create Event
+                    →</button>
+            </div>
+            <div class="glass-card table-card">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Event</th>
+                            <th>Date</th>
+                            <th>Venue</th>
+                            <th>Category</th>
+                            <th>Registered</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let e of events">
+                            <td><strong>{{e.title}}</strong></td>
+                            <td>{{e.date | date:'MMM dd, yyyy'}}</td>
+                            <td>{{e.venue}}</td>
+                            <td><span class="badge badge-purple">{{e.category}}</span></td>
+                            <td>{{e.registrations?.length || 0}} / {{e.maxParticipants}}</td>
+                            <td><button class="btn btn-danger btn-sm" (click)="deleteEvent(e._id)">Delete</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- PAYMENTS TAB -->
+        <div *ngIf="activeTab === 'payments'">
+            <div class="dash-header">
+                <h2>View <span class="gradient-text">Payments</span></h2>
+            </div>
+            <div class="glass-card table-card">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Student</th>
+                            <th>Month</th>
+                            <th>Amount</th>
+                            <th>Method</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let p of payments">
+                            <td><strong>{{p.student?.name || '—'}}</strong><br><small>{{p.student?.danceType}}</small>
+                            </td>
+                            <td>{{p.month}} {{p.year}}</td>
+                            <td>₹{{p.amount}}</td>
+                            <td>{{p.paymentMethod}}</td>
+                            <td><span
+                                    [class]="'badge ' + (p.status === 'Paid' ? 'badge-green' : p.status === 'Overdue' ? 'badge-red' : 'badge-gold')">{{p.status}}</span>
+                            </td>
+                            <td>
+                                <div class="action-btns" *ngIf="p.status !== 'Paid'">
+                                    <button class="btn btn-primary btn-sm" (click)="markPayment(p, 'Paid')">Mark
+                                        Paid</button>
+                                </div>
+                                <span class="check" *ngIf="p.status === 'Paid'">✅</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="empty-state" *ngIf="payments.length === 0"><span>💳</span>
+                    <p>No payment records found.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- GALLERY TAB -->
+        <div *ngIf="activeTab === 'gallery'">
+            <div class="dash-header">
+                <h2>Media <span class="gradient-text">Gallery</span></h2>
+                <span class="badge badge-purple">{{galleryItems.length}} items</span>
+            </div>
+
+            <!-- Upload dropzone -->
+            <div class="gallery-dropzone glass-card" (dragover)="onDragOver($event)" (drop)="onDrop($event)">
+                <input id="gallery-upload-input" type="file" accept="image/*,video/*" multiple style="display:none"
+                    (change)="onGalleryFilesSelected($event)" #galleryInput />
+                <div class="dropzone-icon">{{uploading ? '⏳' : '📁'}}</div>
+                <h4>{{uploading ? 'Uploading...' : 'Drag & Drop Media Here'}}</h4>
+                <p>Images (JPG, PNG, GIF, WEBP) and Videos (MP4, MOV, AVI) supported</p>
+                <button id="gallery-browse-btn" class="btn btn-primary btn-sm" (click)="galleryInput.click()"
+                    [disabled]="uploading">
+                    {{uploading ? '⏳ Processing...' : '📂 Browse Files'}}
+                </button>
+            </div>
+
+            <!-- Gallery Grid -->
+            <div class="gallery-manage-grid" *ngIf="galleryItems.length > 0">
+                <div class="gallery-manage-card glass-card" *ngFor="let item of galleryItems">
+                    <div class="gm-media">
+                        <img *ngIf="item.mediaType === 'image'" [src]="item.secureUrl || item.url" [alt]="item.name" />
+                        <video *ngIf="item.mediaType === 'video'" [src]="item.secureUrl || item.url" controls></video>
+                    </div>
+                    <div class="gm-info">
+                        <span class="gm-name" [title]="item.name">{{item.name}}</span>
+                        <div class="gm-meta">
+                            <span class="badge badge-blue">{{item.mediaType}}</span>
+                            <span class="gm-date">{{item.createdAt | date:'dd MMM yyyy'}}</span>
+                        </div>
+                    </div>
+                    <button class="gm-remove" (click)="removeGalleryItem(item)"
+                        title="Delete from Cloudinary">✕</button>
+                </div>
+            </div>
+
+            <div class="empty-state" *ngIf="galleryItems.length === 0 && !uploading">
+                <span>🖼️</span>
+                <p>No media uploaded yet. Use the upload area above to add photos and videos for the gallery.</p>
+            </div>
+        </div>
+    </main>
+</div>

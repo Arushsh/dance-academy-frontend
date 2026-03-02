@@ -1,0 +1,174 @@
+.register-page {
+    min-height: 100vh;
+    padding: 120px 0 80px;
+    background: var(--gradient-hero);
+    position: relative;
+    overflow: hidden;
+}
+
+.register-wrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+    align-items: start;
+    position: relative;
+    z-index: 1;
+}
+
+.register-left h1 {
+    font-size: clamp(1.8rem, 3vw, 2.5rem);
+    margin: 16px 0 16px;
+}
+
+.register-left>p {
+    color: var(--text-secondary);
+    line-height: 1.8;
+    margin-bottom: 32px;
+}
+
+.register-features {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 40px;
+}
+
+.rf-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.rf-item span {
+    font-size: 1.2rem;
+}
+
+.step-indicators {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.step-ind {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--bg-card);
+    border: 1.5px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    transition: var(--transition);
+}
+
+.step-ind.active {
+    border-color: var(--accent-purple);
+    color: var(--accent-purple);
+    background: rgba(155, 89, 255, 0.1);
+}
+
+.step-ind.completed {
+    background: var(--gradient-accent);
+    border-color: transparent;
+    color: #fff;
+}
+
+.step-line {
+    height: 2px;
+    flex: 1;
+    background: var(--border);
+    transition: var(--transition);
+}
+
+.step-line.completed {
+    background: var(--gradient-accent);
+}
+
+.step-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+    margin-bottom: 0;
+}
+
+.step-labels span {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.step-labels span.active {
+    color: var(--accent-purple);
+}
+
+.register-form {
+    padding: 48px;
+}
+
+.step-title {
+    font-size: 1.3rem;
+    margin-bottom: 28px;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.form-row.btn-row {
+    grid-template-columns: auto 1fr;
+    column-gap: 12px;
+    margin-top: 8px;
+}
+
+textarea.form-control {
+    resize: none;
+}
+
+.course-preview {
+    padding: 16px 20px;
+    margin-top: 12px;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.login-link {
+    margin-top: 24px;
+    text-align: center;
+    font-size: 0.875rem;
+    color: var(--text-muted);
+}
+
+.login-link a {
+    color: var(--accent-purple);
+}
+
+@media (max-width: 768px) {
+    .register-wrapper {
+        grid-template-columns: 1fr;
+    }
+
+    .register-left {
+        display: none;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .form-row.btn-row {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .register-form {
+        padding: 28px;
+    }
+}

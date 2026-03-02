@@ -1,0 +1,177 @@
+<!-- HERO SECTION -->
+<section class="hero">
+    <div class="hero-bg">
+        <div class="orb orb-purple" style="width:600px;height:600px;top:-200px;right:-200px;"></div>
+        <div class="orb orb-pink" style="width:400px;height:400px;bottom:-100px;left:-100px;"></div>
+        <div class="hero-particles">
+            <span *ngFor="let g of galleryImages; let i = index" class="particle"
+                [style.animation-delay]="i * 0.5 + 's'">{{g}}</span>
+        </div>
+    </div>
+    <div class="container">
+        <div class="hero-content">
+            <div class="section-label">🎭 Welcome to Rhythm Dance Academy</div>
+            <h1 class="hero-title">
+                Where <span class="gradient-text">Movement</span><br>
+                Becomes <span class="gold-text">Art</span>
+            </h1>
+            <p class="hero-subtitle">
+                Discover the joy of dance with expert instructors. From Classical to Hip-Hop,
+                find your rhythm and express your soul through the universal language of dance.
+            </p>
+            <div class="hero-actions">
+                <a routerLink="/register" class="btn btn-primary">Start Your Journey ✨</a>
+                <a routerLink="/courses" class="btn btn-secondary">Explore Courses →</a>
+            </div>
+            <div class="hero-stats">
+                <div class="hero-stat" *ngFor="let stat of stats">
+                    <span class="stat-icon">{{stat.icon}}</span>
+                    <span class="stat-value">{{stat.value}}</span>
+                    <span class="stat-label">{{stat.label}}</span>
+                </div>
+            </div>
+        </div>
+        <div class="hero-visual">
+            <div class="hero-card main-card">
+                <div class="card-glow"></div>
+                <div class="card-content">
+                    <div class="dance-emoji">💃</div>
+                    <h3>Join Us Today</h3>
+                    <p>Transform through dance</p>
+                    <div class="card-badges">
+                        <span class="badge badge-purple">Professional</span>
+                        <span class="badge badge-gold">Expert Trainers</span>
+                    </div>
+                </div>
+            </div>
+            <div class="floating-card fc-1">
+                <span>🏆</span>
+                <div>
+                    <div class="fc-title">Award Winning</div>
+                    <div class="fc-sub">Academy 2024</div>
+                </div>
+            </div>
+            <div class="floating-card fc-2">
+                <span>⭐</span>
+                <div>
+                    <div class="fc-title">4.9/5 Rating</div>
+                    <div class="fc-sub">500+ Reviews</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- DANCE TYPES -->
+<section class="section dance-types-section">
+    <div class="container">
+        <div class="section-header">
+            <div class="section-label">💃 Our Dance Styles</div>
+            <h2 class="section-title">Find Your Perfect <span class="gradient-text">Dance Style</span></h2>
+            <p class="section-subtitle">Choose from 4 expertly taught dance forms, each with dedicated batches and
+                experienced trainers.</p>
+        </div>
+        <div class="dance-grid">
+            <a routerLink="/courses" class="dance-card glass-card" *ngFor="let dance of danceTypes">
+                <div class="dance-icon" [style.color]="dance.color">{{dance.icon}}</div>
+                <h3 class="dance-name">{{dance.name}}</h3>
+                <p class="dance-desc">{{dance.desc}}</p>
+                <div class="dance-arrow" [style.color]="dance.color">→</div>
+                <div class="dance-bg-glow" [style.background]="dance.color"></div>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- UPCOMING EVENTS -->
+<section class="section events-preview-section">
+    <div class="container">
+        <div class="section-header-row">
+            <div>
+                <div class="section-label">🎪 Events</div>
+                <h2 class="section-title">Upcoming <span class="gradient-text">Events</span></h2>
+            </div>
+            <a routerLink="/events" class="btn btn-secondary">View All →</a>
+        </div>
+        <div class="events-grid">
+            <div class="event-card glass-card" *ngFor="let event of events">
+                <div class="event-category">
+                    <span class="badge badge-purple">{{event.category}}</span>
+                </div>
+                <div class="event-emoji">🎭</div>
+                <h3>{{event.title}}</h3>
+                <div class="event-meta">
+                    <span>📅 {{event.date | date:'MMM dd, yyyy'}}</span>
+                    <span>📍 {{event.venue}}</span>
+                </div>
+                <a routerLink="/events" class="btn btn-primary btn-sm"
+                    style="width:100%;justify-content:center;">Register Now</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- GALLERY -->
+<section class="section gallery-section">
+    <div class="container">
+        <div class="section-header">
+            <div class="section-label">📸 Gallery</div>
+            <h2 class="section-title">Moments That <span class="gradient-text">Inspire</span></h2>
+        </div>
+        <div class="gallery-grid">
+            <div class="gallery-item" *ngFor="let img of galleryImages; let i = index"
+                [class.gallery-large]="i === 0 || i === 5">
+                <div class="gallery-placeholder">{{img}}</div>
+                <div class="gallery-overlay">
+                    <span>View Gallery</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CONTACT -->
+<section class="section contact-section">
+    <div class="container">
+        <div class="contact-wrapper glass-card">
+            <div class="contact-orb orb orb-purple" style="width:300px;height:300px;right:-100px;top:-100px;"></div>
+            <div class="contact-content">
+                <div class="section-label">📞 Get in Touch</div>
+                <h2 class="section-title">Ready to Start <span class="gradient-text">Dancing?</span></h2>
+                <p class="section-subtitle">Join our dance family today! Visit us or reach out — we'd love to have you.
+                </p>
+                <div class="contact-details">
+                    <div class="contact-item">
+                        <span class="contact-icon">📍</span>
+                        <div>
+                            <div class="contact-label">Address</div>
+                            <div class="contact-value">123 Dance Street, Mumbai, Maharashtra 400001</div>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <span class="contact-icon">📞</span>
+                        <div>
+                            <div class="contact-label">Phone</div>
+                            <div class="contact-value">+91 98765 43210</div>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <span class="contact-icon">✉️</span>
+                        <div>
+                            <div class="contact-label">Email</div>
+                            <div class="contact-value">info&#64;rhythmdance.com</div>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <span class="contact-icon">🕐</span>
+                        <div>
+                            <div class="contact-label">Hours</div>
+                            <div class="contact-value">Monday – Saturday: 6:00 AM – 9:00 PM</div>
+                        </div>
+                    </div>
+                </div>
+                <a routerLink="/register" class="btn btn-primary">Enroll Now →</a>
+            </div>
+        </div>
+    </div>
+</section>
