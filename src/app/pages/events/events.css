@@ -189,12 +189,158 @@
     margin-top: 24px;
 }
 
+@media (max-width: 1024px) {
+    .page-hero {
+        padding: 140px 0 60px;
+    }
+
+    .page-hero .hero-title {
+        font-size: clamp(1.6rem, 3.5vw, 2.8rem);
+    }
+
+    .events-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+
+    .event-card {
+        padding: 28px;
+    }
+
+    .event-emoji-lg {
+        font-size: 2.6rem;
+    }
+}
+
 @media (max-width: 768px) {
+    .page-hero {
+        padding: 120px 0 50px;
+    }
+
+    .page-hero .hero-title {
+        font-size: clamp(1.3rem, 3vw, 2.2rem);
+        margin: 12px 0 16px;
+    }
+
+    .page-hero .hero-subtitle {
+        font-size: 0.95rem;
+    }
+
     .events-grid {
         grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .event-card {
+        padding: 24px;
+    }
+
+    .event-emoji-lg {
+        font-size: 2.4rem;
+    }
+
+    .event-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .event-date-badge {
+        min-width: 48px;
+        padding: 6px 12px;
+    }
+
+    .date-day {
+        font-size: 1.2rem;
+    }
+
+    .date-month {
+        font-size: 0.65rem;
+    }
+
+    .event-card h3 {
+        font-size: 1.1rem;
+    }
+
+    .event-desc {
+        font-size: 0.8rem;
+    }
+
+    .event-info-list {
+        padding: 14px;
+    }
+
+    .event-info-item {
+        font-size: 0.75rem;
+    }
+
+    .event-actions {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .event-actions .btn {
+        width: 100%;
     }
 
     .modal-box {
-        padding: 28px;
+        padding: 24px;
+        max-width: 90%;
+    }
+}
+
+@media (max-width: 480px) {
+    .page-hero {
+        padding: 100px 0 40px;
+    }
+
+    .page-hero .hero-title {
+        font-size: clamp(1.1rem, 2.8vw, 1.8rem);
+    }
+
+    .events-grid {
+        gap: 12px;
+    }
+
+    .event-card {
+        padding: 20px;
+    }
+
+    .event-emoji-lg {
+        font-size: 2rem;
+    }
+
+    .event-header {
+        gap: 8px;
+    }
+
+    .event-card h3 {
+        font-size: 1rem;
+    }
+
+    .event-desc {
+        font-size: 0.75rem;
+    }
+
+    .event-info-item {
+        font-size: 0.7rem;
+    }
+
+    .modal-box {
+        padding: 20px;
+    }
+}
+
+@media (max-width: 360px) {
+    .event-emoji-lg {
+        font-size: 1.8rem;
+    }
+
+    .event-card {
+        padding: 16px;
+    }
+
+    .event-card h3 {
+        font-size: 0.9rem;
     }
 }

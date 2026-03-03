@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { BehaviorSubject, Observable, tap, catchError } from 'rxjs';
 import { Router } from '@angular/router';
+import { throwError } from 'rxjs';
 
 export interface User {
   _id: string; name: string; email: string; role: 'student' | 'admin';
@@ -29,20 +30,34 @@ export class AuthService {
 
   register(data: any): Observable<any> {
     return this.http.post(`${this.BASE}/register`, data).pipe(
-      tap((res: any) => this.storeAuth(res))
+      tap((res: any) => this.storeAuth(res)),
+      catchError(err => {
+        console.error('Registration error:', err);
+        return throwError(() => err);
+      })
     );
   }
 
   login(email: string, password: string): Observable<any> {
     return this.http.post(`${this.BASE}/login`, { email, password }).pipe(
-      tap((res: any) => this.storeAuth(res))
+      tap((res: any) => {
+        console.log('Login successful:', res);
+        this.storeAuth(res);
+      }),
+      catchError(err => {
+        console.error('Login error:', err);
+        return throwError(() => err);
+      })
     );
   }
 
   private storeAuth(res: any) {
-    localStorage.setItem('da_token', res.token);
-    localStorage.setItem('da_user', JSON.stringify(res.user));
-    this.currentUserSubject.next(res.user);
+    if (res.token && res.user) {
+      localStorage.setItem('da_token', res.token);
+      localStorage.setItem('da_user', JSON.stringify(res.user));
+      this.currentUserSubject.next(res.user);
+      console.log('Auth stored:', res.user);
+    }
   }
 
   logout() {
@@ -50,5 +65,9 @@ export class AuthService {
     localStorage.removeItem('da_user');
     this.currentUserSubject.next(null);
     this.router.navigate(['/login']);
+  }
+
+  handleUnauthorized() {
+    this.logout();
   }
 }

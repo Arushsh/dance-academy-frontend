@@ -128,12 +128,45 @@
 @media (max-width: 1024px) {
     .footer-grid {
         grid-template-columns: 1fr 1fr;
+        gap: 32px;
     }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
     .footer-grid {
         grid-template-columns: 1fr;
+        gap: 24px;
+    }
+
+    .footer-col h4 {
+        font-size: 0.95rem;
+    }
+
+    .social-links {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .footer-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .footer-brand .brand-logo span {
+        font-size: 1.7rem;
+    }
+
+    .brand-name {
+        font-size: 1rem;
+    }
+
+    .brand-tag {
+        font-size: 0.7rem;
+    }
+
+    .footer-col ul li a {
+        font-size: 0.8rem;
     }
 
     .footer-bottom {

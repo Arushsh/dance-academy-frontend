@@ -15,65 +15,68 @@
         <div class="course-tabs">
             <button class="course-tab" *ngFor="let c of courses" [class.active]="selectedCourse?.id === c.id"
                 [style.--tab-color]="c.color" (click)="selectCourse(c)">
-                <span class="tab-emoji">{{c.emoji}}</span>
+                <img class="tab-img" [src]="c.image" [alt]="c.name" />
                 <span class="tab-name">{{c.name}}</span>
             </button>
         </div>
 
         <div class="course-detail" *ngIf="selectedCourse">
             <div class="course-info glass-card">
-                <div class="course-header">
-                    <div class="course-big-emoji" [style.color]="selectedCourse.color">{{selectedCourse.emoji}}</div>
-                    <div>
+                <div class="course-hero-img-wrap">
+                    <img class="course-hero-img" [src]="selectedCourse.image" [alt]="selectedCourse.name" />
+                    <div class="course-hero-overlay"></div>
+                    <div class="course-hero-title-block">
                         <span class="badge badge-purple">{{selectedCourse.level}}</span>
                         <h2>{{selectedCourse.name}}</h2>
                         <p>{{selectedCourse.description}}</p>
                     </div>
                 </div>
-                <div class="course-meta-grid">
-                    <div class="meta-item">
-                        <span class="meta-icon">👩‍🏫</span>
-                        <div>
-                            <div class="meta-label">Trainer</div>
-                            <div class="meta-val">{{selectedCourse.trainer}}</div>
+                <div class="course-body">
+                    <div class="course-meta-grid">
+                        <div class="meta-item">
+                            <span class="meta-icon">👩‍🏫</span>
+                            <div>
+                                <div class="meta-label">Trainer</div>
+                                <div class="meta-val">{{selectedCourse.trainer}}</div>
+                            </div>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-icon">⏱️</span>
+                            <div>
+                                <div class="meta-label">Duration</div>
+                                <div class="meta-val">{{selectedCourse.duration}}</div>
+                            </div>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-icon">🎓</span>
+                            <div>
+                                <div class="meta-label">Experience</div>
+                                <div class="meta-val">{{selectedCourse.experience}}</div>
+                            </div>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-icon">💰</span>
+                            <div>
+                                <div class="meta-label">Monthly Fee</div>
+                                <div class="meta-val">₹{{selectedCourse.fees?.monthly}}</div>
+                            </div>
                         </div>
                     </div>
-                    <div class="meta-item">
-                        <span class="meta-icon">⏱️</span>
-                        <div>
-                            <div class="meta-label">Duration</div>
-                            <div class="meta-val">{{selectedCourse.duration}}</div>
+                    <div class="features-section">
+                        <h4>What You'll Learn</h4>
+                        <div class="features-grid">
+                            <div class="feature-item" *ngFor="let feat of selectedCourse.features">✅ {{feat}}</div>
                         </div>
                     </div>
-                    <div class="meta-item">
-                        <span class="meta-icon">🎓</span>
-                        <div>
-                            <div class="meta-label">Experience</div>
-                            <div class="meta-val">{{selectedCourse.experience}}</div>
+                    <div class="batch-section">
+                        <h4>Batch Timings</h4>
+                        <div class="batch-tags">
+                            <span class="batch-tag" *ngFor="let b of selectedCourse.batchTimings">🕐 {{b}}</span>
                         </div>
                     </div>
-                    <div class="meta-item">
-                        <span class="meta-icon">💰</span>
-                        <div>
-                            <div class="meta-label">Monthly Fee</div>
-                            <div class="meta-val">₹{{selectedCourse.fees?.monthly}}</div>
-                        </div>
+                    <div class="course-cta">
+                        <a routerLink="/register" class="btn btn-primary">Enroll in {{selectedCourse.name}} →</a>
                     </div>
-                </div>
-                <div class="features-section">
-                    <h4>What You'll Learn</h4>
-                    <div class="features-grid">
-                        <div class="feature-item" *ngFor="let feat of selectedCourse.features">✅ {{feat}}</div>
-                    </div>
-                </div>
-                <div class="batch-section">
-                    <h4>Batch Timings</h4>
-                    <div class="batch-tags">
-                        <span class="batch-tag" *ngFor="let b of selectedCourse.batchTimings">🕐 {{b}}</span>
-                    </div>
-                </div>
-                <div class="course-cta">
-                    <a routerLink="/register" class="btn btn-primary">Enroll in {{selectedCourse.name}} →</a>
                 </div>
             </div>
         </div>

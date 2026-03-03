@@ -51,7 +51,11 @@ export class Register {
   onSubmit() {
     if (!this.formData.danceType || !this.formData.batchTiming) { this.error = 'Please select dance type and batch timing.'; return; }
     this.loading = true; this.error = '';
-    const { confirmPassword, ...data } = this.formData;
+    const { confirmPassword, age, phone, address, ...rest } = this.formData;
+    const data: any = { ...rest };
+    if (age) data.age = parseInt(age, 10);
+    if (phone) data.phone = phone;
+    if (address) data.address = address;
     this.auth.register(data).subscribe({
       next: (res: any) => {
         this.success = '🎉 Registered successfully! Redirecting...';

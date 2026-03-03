@@ -158,6 +158,11 @@
         display: flex;
     }
 
+    .nav-container {
+        padding: 0 16px;
+        gap: 16px;
+    }
+
     .nav-links {
         display: none;
         position: fixed;
@@ -167,7 +172,7 @@
         background: rgba(8, 8, 15, 0.97);
         backdrop-filter: blur(20px);
         flex-direction: column;
-        padding: 24px;
+        padding: 20px;
         border-bottom: 1px solid var(--border);
         gap: 4px;
     }
@@ -178,13 +183,87 @@
 
     .nav-links a {
         padding: 12px 16px;
+        font-size: 0.9rem;
     }
 
     .nav-actions {
         gap: 8px;
+        flex-wrap: wrap;
     }
 
     .nav-actions .btn-secondary {
         display: none;
+    }
+
+    .brand-icon {
+        font-size: 1.5rem;
+    }
+
+    .brand-text {
+        gap: 2px;
+    }
+
+    .brand-name {
+        font-size: 1rem;
+    }
+
+    .brand-sub {
+        font-size: 0.55rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .navbar {
+        padding: 12px 0;
+    }
+
+    .navbar.scrolled {
+        padding: 10px 0;
+    }
+
+    .nav-container {
+        padding: 0 12px;
+        gap: 12px;
+    }
+
+    .brand-icon {
+        font-size: 1.3rem;
+    }
+
+    .brand-name {
+        font-size: 0.9rem;
+    }
+
+    .brand-sub {
+        font-size: 0.5rem;
+    }
+
+    .nav-actions {
+        gap: 6px;
+    }
+
+    .nav-actions .btn-sm {
+        padding: 8px 14px;
+        font-size: 0.7rem;
+    }
+
+    .user-chip {
+        padding: 5px 12px 5px 5px;
+    }
+
+    .user-avatar {
+        width: 24px;
+        height: 24px;
+        font-size: 0.7rem;
+    }
+
+    .user-name {
+        font-size: 0.75rem;
+    }
+
+    .mobile-toggle span {
+        width: 20px;
+        height: 1.5px;
+        gap: 4px;
     }
 }

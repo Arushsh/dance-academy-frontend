@@ -21,6 +21,8 @@ export class Login {
     if (auth.isLoggedIn) {
       this.router.navigate([auth.isAdmin ? '/admin-dashboard' : '/student-dashboard']);
     }
+    // Auto-populate student credentials on load
+    this.setTab('student');
   }
 
   setTab(tab: 'student' | 'admin') {
@@ -31,15 +33,26 @@ export class Login {
   }
 
   onLogin() {
-    if (!this.email || !this.password) { this.error = 'Please enter email and password.'; return; }
-    this.loading = true; this.error = '';
+    console.log('Login attempt:', { email: this.email, password: this.password });
+    if (!this.email || !this.password) { 
+      this.error = 'Please enter email and password.'; 
+      console.error('Validation failed: empty email or password');
+      return; 
+    }
+    this.loading = true; 
+    this.error = '';
     this.auth.login(this.email, this.password).subscribe({
       next: (res: any) => {
+        console.log('Login success:', res);
         this.loading = false;
         if (res.user.role === 'admin') this.router.navigate(['/admin-dashboard']);
         else this.router.navigate(['/student-dashboard']);
       },
-      error: (err) => { this.error = err.error?.message || 'Login failed. Check credentials.'; this.loading = false; }
+      error: (err) => { 
+        console.error('Login failed:', err);
+        this.error = err.error?.message || 'Login failed. Check credentials.'; 
+        this.loading = false; 
+      }
     });
   }
 }

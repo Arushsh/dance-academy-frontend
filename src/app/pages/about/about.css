@@ -227,6 +227,24 @@
     }
 }
 
+@media (max-width: 1024px) {
+    .mission-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .trainers-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .values-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .timeline {
+        max-width: 100%;
+    }
+}
+
 @media (max-width: 768px) {
     .mission-grid {
         grid-template-columns: 1fr;
@@ -257,5 +275,52 @@
     .cta-bar {
         flex-direction: column;
         text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .timeline-item,
+    .timeline-item.right {
+        padding: 0 0 0 50px;
+    }
+
+    .mission-card {
+        padding: 32px 24px;
+    }
+
+    .mission-icon {
+        font-size: 2.5rem;
+    }
+
+    .trainers-grid {
+        gap: 16px;
+    }
+
+    .trainer-card {
+        padding: 28px 20px;
+    }
+
+    .trainer-avatar {
+        width: 70px;
+        height: 70px;
+    }
+
+    .values-grid {
+        gap: 16px;
+    }
+
+    .value-card {
+        padding: 24px;
+    }
+
+    .cta-bar {
+        padding: 32px 20px;
+    }
+}
+
+@media (max-width: 360px) {
+    .trainer-avatar {
+        width: 60px;
+        height: 60px;
     }
 }

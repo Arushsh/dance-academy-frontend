@@ -486,6 +486,20 @@ small {
 
 
 
+@media (max-width: 1024px) {
+    .dash-header h2 {
+        font-size: 1.6rem;
+    }
+
+    .admin-stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .gallery-manage-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
 @media (max-width: 768px) {
     .dashboard {
         grid-template-columns: 1fr;
@@ -496,6 +510,7 @@ small {
         height: auto;
         flex-direction: row;
         flex-wrap: wrap;
+        padding: 16px;
     }
 
     .sidebar-user {
@@ -510,7 +525,40 @@ small {
         grid-template-columns: repeat(2, 1fr);
     }
 
+    .gallery-manage-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    .gallery-dropzone {
+        padding: 32px 24px;
+    }
+
     .form-row2 {
         grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .gallery-manage-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .gallery-dropzone {
+        padding: 28px 20px;
+    }
+
+    .admin-stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .dash-header h2 {
+        font-size: 1.4rem;
+    }
+}
+
+@media (max-width: 360px) {
+    .dash-header h2 {
+        font-size: 1.2rem;
     }
 }
