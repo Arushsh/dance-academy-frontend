@@ -17,6 +17,8 @@
                 Status</button>
             <button class="sb-link" [class.active]="activeTab === 'events'" (click)="setTab('events')">🎪 My
                 Events</button>
+            <button class="sb-link" [class.active]="activeTab === 'gallery'" (click)="setTab('gallery')">🖼️
+                Gallery</button>
         </nav>
         <button class="sb-logout" (click)="logout()">🚪 Logout</button>
     </aside>
@@ -25,21 +27,24 @@
     <main class="dash-content">
         <div class="alert alert-success" *ngIf="successMsg">{{successMsg}}</div>
 
-        <!-- PROFILE TAB -->
+        <!-- ══════════════ PROFILE TAB ══════════════ -->
         <div *ngIf="activeTab === 'profile'">
             <div class="dash-header">
                 <h2>My <span class="gradient-text">Profile</span></h2>
                 <button class="btn btn-secondary btn-sm" (click)="editMode = !editMode">{{editMode ? 'Cancel' : '✏️ Edit
                     Profile'}}</button>
             </div>
-            <div class="profile-grid">
+            <div *ngIf="loadingProfile" class="empty-state"><span>⏳</span>
+                <p>Loading profile...</p>
+            </div>
+            <div class="profile-grid" *ngIf="!loadingProfile">
                 <div class="profile-card glass-card">
                     <div class="profile-avatar">{{user?.name?.charAt(0)}}</div>
                     <h3>{{user?.name}}</h3>
                     <p class="profile-email">{{user?.email}}</p>
                     <div class="profile-badges">
-                        <span class="badge badge-gold">{{user?.danceType}}</span>
-                        <span class="badge badge-blue">{{user?.batchTiming}}</span>
+                        <span class="badge badge-gold">{{user?.danceType || 'No style set'}}</span>
+                        <span class="badge badge-blue">{{user?.batchTiming || 'No batch set'}}</span>
                     </div>
                     <div class="profile-joining">Joined: {{user?.joiningDate | date:'MMMM yyyy'}}</div>
                 </div>
@@ -68,132 +73,224 @@
             </div>
         </div>
 
-        <!-- ATTENDANCE TAB -->
+        <!-- ══════════════ ATTENDANCE TAB ══════════════ -->
         <div *ngIf="activeTab === 'attendance'">
             <div class="dash-header">
                 <h2>My <span class="gradient-text">Attendance</span></h2>
             </div>
-            <div class="stats-row" *ngIf="attendance">
-                <div class="stat-card glass-card">
-                    <div class="sc-val">{{attendance.stats.total}}</div>
-                    <div class="sc-label">Total Classes</div>
-                </div>
-                <div class="stat-card glass-card green">
-                    <div class="sc-val">{{attendance.stats.present}}</div>
-                    <div class="sc-label">Present</div>
-                </div>
-                <div class="stat-card glass-card red">
-                    <div class="sc-val">{{attendance.stats.absent}}</div>
-                    <div class="sc-label">Absent</div>
-                </div>
-                <div class="stat-card glass-card purple">
-                    <div class="sc-val">{{attendance.stats.percentage}}%</div>
-                    <div class="sc-label">Attendance Rate</div>
-                </div>
+            <div *ngIf="loadingAttendance" class="empty-state"><span>⏳</span>
+                <p>Loading attendance...</p>
             </div>
-            <div class="attendance-bar glass-card" *ngIf="attendance">
-                <div class="pbar-label">Attendance: {{attendance.stats.percentage}}%</div>
-                <div class="pbar-track">
-                    <div class="pbar-fill" [style.width]="attendance.stats.percentage + '%'"></div>
-                </div>
+            <div *ngIf="!loadingAttendance && !attendance" class="empty-state glass-card">
+                <span>📅</span>
+                <p>No attendance records yet. Your teacher will mark attendance after each class.</p>
             </div>
-            <div class="glass-card table-card" *ngIf="attendance">
-                <h4>Recent Classes</h4>
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Date</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr *ngFor="let a of attendance.attendance; let i = index">
-                            <td>{{i+1}}</td>
-                            <td>{{a.date | date:'EEE, MMM dd yyyy'}}</td>
-                            <td><span
-                                    [class]="'badge ' + (a.status === 'Present' ? 'badge-green' : 'badge-red')">{{a.status}}</span>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+            <div *ngIf="!loadingAttendance && attendance">
+                <div class="stats-row">
+                    <div class="stat-card glass-card">
+                        <div class="sc-val">{{attendance.stats.total}}</div>
+                        <div class="sc-label">Total Classes</div>
+                    </div>
+                    <div class="stat-card glass-card green">
+                        <div class="sc-val">{{attendance.stats.present}}</div>
+                        <div class="sc-label">Present</div>
+                    </div>
+                    <div class="stat-card glass-card red">
+                        <div class="sc-val">{{attendance.stats.absent}}</div>
+                        <div class="sc-label">Absent</div>
+                    </div>
+                    <div class="stat-card glass-card purple">
+                        <div class="sc-val">{{attendance.stats.percentage}}%</div>
+                        <div class="sc-label">Attendance Rate</div>
+                    </div>
+                </div>
+                <div class="attendance-bar glass-card">
+                    <div class="pbar-label">Attendance: {{attendance.stats.percentage}}%</div>
+                    <div class="pbar-track">
+                        <div class="pbar-fill" [style.width]="attendance.stats.percentage + '%'"></div>
+                    </div>
+                </div>
+                <div class="glass-card table-card">
+                    <h4>Recent Classes</h4>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let a of attendance.attendance; let i = index">
+                                <td>{{i+1}}</td>
+                                <td>{{a.date | date:'EEE, MMM dd yyyy'}}</td>
+                                <td>
+                                    <span
+                                        [class]="'badge ' + (a.status === 'Present' ? 'badge-green' : a.status === 'Late' ? 'badge-gold' : 'badge-red')">{{a.status}}</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="empty-state" *ngIf="attendance.attendance.length === 0">
+                        <span>📅</span>
+                        <p>No attendance records yet.</p>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- FEES TAB -->
+        <!-- ══════════════ FEES TAB ══════════════ -->
         <div *ngIf="activeTab === 'fees'">
             <div class="dash-header">
                 <h2>Fee <span class="gradient-text">Status</span></h2>
             </div>
-
-            <!-- FEES SUMMARY CARDS -->
-            <div class="fees-summary-row" *ngIf="fees">
-                <div class="fee-sum-card glass-card red">
-                    <div class="fee-sum-icon">⚠️</div>
-                    <div class="fee-sum-val">₹{{pendingFeesTotal}}</div>
-                    <div class="fee-sum-label">Pending / Remaining Amount</div>
-                </div>
-                <div class="fee-sum-card glass-card green">
-                    <div class="fee-sum-icon">✅</div>
-                    <div class="fee-sum-val">₹{{paidFeesTotal}}</div>
-                    <div class="fee-sum-label">Total Paid So Far</div>
-                </div>
-                <div class="fee-sum-card glass-card purple">
-                    <div class="fee-sum-icon">📋</div>
-                    <div class="fee-sum-val">{{fees.pendingCount}}</div>
-                    <div class="fee-sum-label">Pending Installments</div>
-                </div>
+            <div *ngIf="loadingFees" class="empty-state"><span>⏳</span>
+                <p>Loading fee records...</p>
             </div>
-
-            <div class="fees-alert" *ngIf="fees?.pendingCount > 0">
-                ⚠️ You have <strong>{{fees.pendingCount}}</strong> pending payment(s) totalling
-                <strong>₹{{pendingFeesTotal}}</strong>. Please clear as soon as possible.
+            <div *ngIf="!loadingFees && !fees" class="empty-state glass-card">
+                <span>💳</span>
+                <p>No fee records found. Your admin will add fee records for you.</p>
             </div>
-            <div class="glass-card table-card" *ngIf="fees">
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>Month</th>
-                            <th>Amount</th>
-                            <th>Method</th>
-                            <th>Status</th>
-                            <th>Paid On</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr *ngFor="let p of fees.payments">
-                            <td>{{p.month}} {{p.year}}</td>
-                            <td>₹{{p.amount}}</td>
-                            <td>{{p.paymentMethod}}</td>
-                            <td><span
-                                    [class]="'badge ' + (p.status === 'Paid' ? 'badge-green' : p.status === 'Overdue' ? 'badge-red' : 'badge-gold')">{{p.status}}</span>
-                            </td>
-                            <td>{{p.paymentDate ? (p.paymentDate | date:'dd MMM yyyy') : '—'}}</td>
-                        </tr>
-                    </tbody>
-                </table>
+            <div *ngIf="!loadingFees && fees">
+                <div class="fees-summary-row">
+                    <div class="fee-sum-card glass-card red">
+                        <div class="fee-sum-icon">⚠️</div>
+                        <div class="fee-sum-val">₹{{pendingFeesTotal}}</div>
+                        <div class="fee-sum-label">Pending / Remaining Amount</div>
+                    </div>
+                    <div class="fee-sum-card glass-card green">
+                        <div class="fee-sum-icon">✅</div>
+                        <div class="fee-sum-val">₹{{paidFeesTotal}}</div>
+                        <div class="fee-sum-label">Total Paid So Far</div>
+                    </div>
+                    <div class="fee-sum-card glass-card purple">
+                        <div class="fee-sum-icon">📋</div>
+                        <div class="fee-sum-val">{{fees.pendingCount}}</div>
+                        <div class="fee-sum-label">Pending Installments</div>
+                    </div>
+                </div>
+                <div class="fees-alert" *ngIf="fees?.pendingCount > 0">
+                    ⚠️ You have <strong>{{fees.pendingCount}}</strong> pending payment(s) totalling
+                    <strong>₹{{pendingFeesTotal}}</strong>. Please contact admin.
+                </div>
+                <div class="glass-card table-card">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Month</th>
+                                <th>Amount</th>
+                                <th>Method</th>
+                                <th>Status</th>
+                                <th>Paid On</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let p of fees.payments">
+                                <td>{{p.month}} {{p.year}}</td>
+                                <td>₹{{p.amount}}</td>
+                                <td>{{p.paymentMethod || '—'}}</td>
+                                <td>
+                                    <span
+                                        [class]="'badge ' + (p.status === 'Paid' ? 'badge-green' : p.status === 'Overdue' ? 'badge-red' : 'badge-gold')">{{p.status}}</span>
+                                </td>
+                                <td>{{p.paymentDate ? (p.paymentDate | date:'dd MMM yyyy') : '—'}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="empty-state" *ngIf="fees.payments.length === 0"><span>💳</span>
+                        <p>No fee records.</p>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- EVENTS TAB -->
+        <!-- ══════════════ EVENTS TAB ══════════════ -->
         <div *ngIf="activeTab === 'events'">
             <div class="dash-header">
                 <h2>My <span class="gradient-text">Events</span></h2>
             </div>
-            <div class="events-list" *ngIf="myEvents.length > 0">
-                <div class="event-row glass-card" *ngFor="let e of myEvents">
-                    <div class="event-icon">🎭</div>
-                    <div>
-                        <h4>{{e.title}}</h4>
-                        <p>{{e.date | date:'MMMM dd, yyyy'}} · {{e.venue}}</p>
+            <div *ngIf="loadingEvents" class="empty-state"><span>⏳</span>
+                <p>Loading events...</p>
+            </div>
+            <div *ngIf="!loadingEvents">
+                <div class="events-list" *ngIf="myEvents.length > 0">
+                    <div class="event-row glass-card" *ngFor="let e of myEvents">
+                        <div class="event-icon">🎭</div>
+                        <div>
+                            <h4>{{e.title}}</h4>
+                            <p>{{e.date | date:'MMMM dd, yyyy'}} · {{e.venue}}</p>
+                        </div>
+                        <span class="badge badge-green">Registered</span>
                     </div>
-                    <span class="badge badge-green">Registered</span>
+                </div>
+                <div class="empty-state" *ngIf="myEvents.length === 0">
+                    <span>🎪</span>
+                    <p>You haven't registered for any events yet.</p>
+                    <a href="/events" class="btn btn-primary btn-sm">Browse Events</a>
                 </div>
             </div>
-            <div class="empty-state" *ngIf="myEvents.length === 0">
-                <span>🎪</span>
-                <p>You haven't registered for any events yet.</p>
-                <a href="/events" class="btn btn-primary btn-sm">Browse Events</a>
+        </div>
+
+        <!-- ══════════════ GALLERY TAB ══════════════ -->
+        <div *ngIf="activeTab === 'gallery'">
+            <div class="dash-header">
+                <h2>Academy <span class="gradient-text">Gallery</span></h2>
+                <span class="badge badge-purple">{{galleryItems.length}} items</span>
+            </div>
+
+            <!-- Section Filter Tabs -->
+            <div class="gallery-section-tabs glass-card">
+                <button *ngFor="let s of gallerySections"
+                    [class]="'section-tab-btn ' + (galleryFilter === s ? 'active' : '')"
+                    (click)="filterGallery(s)">{{s}}</button>
+            </div>
+
+            <div *ngIf="loadingGallery" class="empty-state"><span>⏳</span>
+                <p>Loading gallery...</p>
+            </div>
+
+            <!-- Gallery Grid -->
+            <div class="student-gallery-grid" *ngIf="!loadingGallery && galleryItems.length > 0">
+                <div class="sg-card glass-card" *ngFor="let item of galleryItems" (click)="openLightbox(item)">
+                    <div class="sg-media">
+                        <img *ngIf="item.mediaType === 'image'" [src]="item.secureUrl || item.url"
+                            [alt]="item.title || item.name" />
+                        <div *ngIf="item.mediaType === 'video'" class="sg-video-thumb">
+                            <span class="play-badge">▶ Video</span>
+                            <video [src]="item.secureUrl || item.url" preload="metadata"></video>
+                        </div>
+                    </div>
+                    <div class="sg-info">
+                        <span class="sg-title">{{item.title || item.name}}</span>
+                        <div class="sg-meta">
+                            <span class="badge badge-blue">{{item.section}}</span>
+                            <span class="sg-date">{{item.createdAt | date:'MMM yyyy'}}</span>
+                        </div>
+                        <button class="btn btn-secondary btn-sm sg-dl"
+                            (click)="$event.stopPropagation(); downloadItem(item)">
+                            ⬇️ Download
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="empty-state" *ngIf="!loadingGallery && galleryItems.length === 0">
+                <span>🖼️</span>
+                <p>No media in "{{galleryFilter}}" section yet.</p>
+            </div>
+
+            <!-- Lightbox -->
+            <div class="lightbox-overlay" *ngIf="lightboxItem" (click)="closeLightbox()">
+                <div class="lightbox-box" (click)="$event.stopPropagation()">
+                    <button class="lightbox-close" (click)="closeLightbox()">✕</button>
+                    <img *ngIf="lightboxItem.mediaType === 'image'" [src]="lightboxItem.secureUrl || lightboxItem.url"
+                        [alt]="lightboxItem.title" />
+                    <video *ngIf="lightboxItem.mediaType === 'video'" [src]="lightboxItem.secureUrl || lightboxItem.url"
+                        controls autoplay></video>
+                    <div class="lightbox-footer">
+                        <span>{{lightboxItem.title || lightboxItem.name}}</span>
+                        <button class="btn btn-primary btn-sm" (click)="downloadItem(lightboxItem)">⬇️ Download</button>
+                    </div>
+                </div>
             </div>
         </div>
     </main>

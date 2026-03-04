@@ -7,6 +7,7 @@ import { Register } from './pages/register/register';
 import { Login } from './pages/login/login';
 import { StudentDashboard } from './pages/student-dashboard/student-dashboard';
 import { AdminDashboard } from './pages/admin-dashboard/admin-dashboard';
+import { GalleryPage } from './pages/gallery/gallery';
 import { authGuard } from './guards/auth-guard';
 
 export const routes: Routes = [
@@ -14,6 +15,7 @@ export const routes: Routes = [
     { path: 'about', component: About },
     { path: 'courses', component: Courses },
     { path: 'events', component: Events },
+    { path: 'gallery', component: GalleryPage },
     { path: 'register', component: Register },
     { path: 'login', component: Login },
     { path: 'student-dashboard', component: StudentDashboard, canActivate: [authGuard] },

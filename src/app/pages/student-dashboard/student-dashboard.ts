@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth';
 import { StudentService } from '../../services/student';
+import { GalleryService } from '../../services/gallery';
 
 @Component({
   selector: 'app-student-dashboard',
@@ -17,33 +18,118 @@ export class StudentDashboard implements OnInit {
   attendance: any = null;
   fees: any = null;
   myEvents: any[] = [];
-  loading = false;
+  galleryItems: any[] = [];
+  galleryFilter = 'All';
+  gallerySections = ['All', 'General', 'Performance', 'Workshop', 'Competition', 'Festival', 'Behind the Scenes'];
+  loadingProfile = true;
+  loadingAttendance = true;
+  loadingFees = true;
+  loadingEvents = true;
+  loadingGallery = false;
   editMode = false;
   editData: any = {};
   successMsg = '';
+  lightboxItem: any = null;
 
-  constructor(public auth: AuthService, private studentService: StudentService, private router: Router) { }
+  constructor(
+    public auth: AuthService,
+    private studentService: StudentService,
+    private galleryService: GalleryService,
+    private router: Router
+  ) { }
 
   ngOnInit() {
     this.user = this.auth.currentUser;
     this.editData = { ...this.user };
-    this.loadData();
+    this.loadProfile();
+    this.loadAttendance();
+    this.loadFees();
+    this.loadEvents();
   }
 
-  loadData() {
-    this.studentService.getAttendance().subscribe({ next: (data: any) => this.attendance = data, error: () => this.attendance = this.getMockAttendance() });
-    this.studentService.getFees().subscribe({ next: (data: any) => this.fees = data, error: () => this.fees = this.getMockFees() });
-    this.studentService.getMyEvents().subscribe({ next: (data: any) => this.myEvents = data, error: () => this.myEvents = [] });
+  setTab(tab: string) {
+    this.activeTab = tab;
+    this.successMsg = '';
+    if (tab === 'gallery' && this.galleryItems.length === 0) this.loadGallery();
   }
 
-  setTab(tab: string) { this.activeTab = tab; this.successMsg = ''; }
+  loadProfile() {
+    this.loadingProfile = true;
+    this.studentService.getProfile().subscribe({
+      next: (u: any) => {
+        this.user = u;
+        this.editData = { ...u };
+        this.loadingProfile = false;
+      },
+      error: () => {
+        this.user = this.auth.currentUser;
+        this.editData = { ...this.user };
+        this.loadingProfile = false;
+      }
+    });
+  }
+
+  loadAttendance() {
+    this.loadingAttendance = true;
+    this.studentService.getAttendance().subscribe({
+      next: (data: any) => { this.attendance = data; this.loadingAttendance = false; },
+      error: () => { this.attendance = null; this.loadingAttendance = false; }
+    });
+  }
+
+  loadFees() {
+    this.loadingFees = true;
+    this.studentService.getFees().subscribe({
+      next: (data: any) => { this.fees = data; this.loadingFees = false; },
+      error: () => { this.fees = null; this.loadingFees = false; }
+    });
+  }
+
+  loadEvents() {
+    this.loadingEvents = true;
+    this.studentService.getMyEvents().subscribe({
+      next: (data: any) => { this.myEvents = data; this.loadingEvents = false; },
+      error: () => { this.myEvents = []; this.loadingEvents = false; }
+    });
+  }
+
+  loadGallery(section?: string) {
+    this.loadingGallery = true;
+    this.galleryService.getAll(section).subscribe({
+      next: (items: any[]) => { this.galleryItems = items; this.loadingGallery = false; },
+      error: () => { this.galleryItems = []; this.loadingGallery = false; }
+    });
+  }
+
+  filterGallery(section: string) {
+    this.galleryFilter = section;
+    this.loadGallery(section);
+  }
 
   saveProfile() {
     this.studentService.updateProfile(this.editData).subscribe({
-      next: (res: any) => { this.user = res.user; this.editMode = false; this.successMsg = '✅ Profile updated!'; },
+      next: (res: any) => {
+        this.user = res.user;
+        this.editMode = false;
+        this.successMsg = '✅ Profile updated!';
+        setTimeout(() => this.successMsg = '', 3000);
+      },
       error: () => { this.successMsg = '❌ Update failed.'; }
     });
   }
+
+  downloadItem(item: any) {
+    const a = document.createElement('a');
+    a.href = item.secureUrl || item.url;
+    a.download = item.title || item.name || 'media';
+    a.target = '_blank';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  }
+
+  openLightbox(item: any) { this.lightboxItem = item; }
+  closeLightbox() { this.lightboxItem = null; }
 
   logout() { this.auth.logout(); }
 
@@ -59,24 +145,5 @@ export class StudentDashboard implements OnInit {
     return this.fees.payments
       .filter((p: any) => p.status === 'Paid')
       .reduce((sum: number, p: any) => sum + (p.amount || 0), 0);
-  }
-
-
-  getMockAttendance(): any {
-    const records = Array.from({ length: 10 }, (_, i) => ({
-      date: new Date(Date.now() - i * 86400000).toISOString(), status: Math.random() > 0.2 ? 'Present' : 'Absent'
-    }));
-    const present = records.filter(r => r.status === 'Present').length;
-    return { attendance: records, stats: { total: 10, present, absent: 10 - present, percentage: present * 10 } };
-  }
-
-  getMockFees(): any {
-    return {
-      payments: [
-        { month: 'March', year: 2026, amount: 1500, status: 'Pending', paymentMethod: 'Cash' },
-        { month: 'February', year: 2026, amount: 1500, status: 'Paid', paymentDate: '2026-02-05', paymentMethod: 'UPI' },
-        { month: 'January', year: 2026, amount: 1500, status: 'Paid', paymentDate: '2026-01-05', paymentMethod: 'UPI' },
-      ], pendingCount: 1
-    };
   }
 }

@@ -1,41 +1,30 @@
-import { Injectable } from '@angular/core';
-import {
-  HttpRequest,
-  HttpHandler,
-  HttpEvent,
-  HttpInterceptor,
-} from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpHandlerFn, HttpRequest, HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
+import { inject } from '@angular/core';
+import { catchError, throwError } from 'rxjs';
 import { AuthService } from '../services/auth';
 
-@Injectable()
-export class AuthInterceptor implements HttpInterceptor {
-  constructor(private auth: AuthService) {}
-
-  intercept(
-    request: HttpRequest<unknown>,
-    next: HttpHandler
-  ): Observable<HttpEvent<unknown>> {
-    const token = this.auth.token;
-    
-    // Ensure Content-Type is set for JSON requests
-    if (!request.headers.has('Content-Type') && request.body instanceof Object) {
-      request = request.clone({
-        setHeaders: {
-          'Content-Type': 'application/json',
-        }
-      });
-    }
-    
-    if (token) {
-      request = request.clone({
-        setHeaders: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-    }
-
-    return next.handle(request);
+// Functional auth interceptor — works with withFetch()
+export const authInterceptorFn: HttpInterceptorFn = (req: HttpRequest<unknown>, next: HttpHandlerFn) => {
+  const auth = inject(AuthService);
+  const token = auth.token;
+  if (token) {
+    req = req.clone({
+      setHeaders: { Authorization: `Bearer ${token}` }
+    });
   }
-}
+  return next(req);
+};
 
+// Functional error interceptor — works with withFetch()
+export const errorInterceptorFn: HttpInterceptorFn = (req: HttpRequest<unknown>, next: HttpHandlerFn) => {
+  const auth = inject(AuthService);
+  return next(req).pipe(
+    catchError((error: HttpErrorResponse) => {
+      if (error.status === 401) {
+        console.error('401 Unauthorized - logging out');
+        auth.handleUnauthorized();
+      }
+      return throwError(() => error);
+    })
+  );
+};

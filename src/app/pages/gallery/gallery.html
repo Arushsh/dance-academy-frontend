@@ -1,0 +1,106 @@
+<!-- PAGE HERO -->
+<section class="page-hero gallery-hero">
+    <div class="orb orb-pink" style="width:400px;height:400px;top:-150px;right:-100px;"></div>
+    <div class="orb orb-blue" style="width:300px;height:300px;bottom:-100px;left:-50px;"></div>
+    <div class="container">
+        <div class="section-label">🖼️ Gallery</div>
+        <h1 class="hero-title">Our <span class="gradient-text">Memories</span></h1>
+        <p class="hero-subtitle">Photos and videos from performances, workshops, and all our special moments.</p>
+        <p class="gallery-count-badge" *ngIf="!loading">{{allItems.length}} media items</p>
+    </div>
+</section>
+
+<!-- SECTION FILTER -->
+<section class="section gallery-filter-section">
+    <div class="container">
+        <div class="gallery-tabs">
+            <button *ngFor="let s of sections" [class]="'gallery-tab-btn ' + (activeSection === s ? 'active' : '')"
+                (click)="filterBySection(s)">
+                {{s}}
+                <span class="tab-count" *ngIf="getCategoryCount(s) > 0">{{getCategoryCount(s)}}</span>
+            </button>
+        </div>
+    </div>
+</section>
+
+<!-- GALLERY GRID -->
+<section class="section gallery-main-section">
+    <div class="container">
+        <!-- Loading -->
+        <div class="gallery-loading" *ngIf="loading">
+            <div class="loading-grid">
+                <div class="loading-card" *ngFor="let i of [1,2,3,4,5,6,7,8,9]"></div>
+            </div>
+        </div>
+
+        <!-- Empty -->
+        <div class="gallery-empty" *ngIf="!loading && filteredItems.length === 0">
+            <span>🎭</span>
+            <h3>No media in "{{activeSection}}"</h3>
+            <p>Check back later or browse other sections.</p>
+        </div>
+
+        <!-- Images Grid -->
+        <div *ngIf="!loading && filteredItems.length > 0">
+            <!-- Videos Row (if any in this section) -->
+            <div *ngIf="videoItems.length > 0" class="media-section-header">
+                <h3>🎬 Videos <span class="cnt">({{videoItems.length}})</span></h3>
+            </div>
+            <div class="gallery-video-row" *ngIf="videoItems.length > 0">
+                <div class="gal-video-card glass-card" *ngFor="let v of videoItems" (click)="openLightbox(v)">
+                    <div class="gal-video-thumb">
+                        <video [src]="v.secureUrl || v.url" preload="metadata"></video>
+                        <div class="video-play-overlay">▶</div>
+                    </div>
+                    <div class="gal-item-info">
+                        <span class="gal-item-title">{{v.title || v.name}}</span>
+                        <div class="gal-item-meta">
+                            <span class="badge badge-purple">{{v.section}}</span>
+                            <span class="gal-date">{{v.createdAt | date:'MMM yyyy'}}</span>
+                        </div>
+                        <button class="btn btn-secondary btn-sm gal-dl-btn" (click)="downloadItem(v, $event)">⬇️
+                            Download</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Images Grid -->
+            <div *ngIf="imageItems.length > 0" class="media-section-header">
+                <h3>📷 Photos <span class="cnt">({{imageItems.length}})</span></h3>
+            </div>
+            <div class="gallery-photo-grid" *ngIf="imageItems.length > 0">
+                <div class="gal-photo-card" *ngFor="let img of imageItems" (click)="openLightbox(img)">
+                    <img [src]="img.secureUrl || img.url" [alt]="img.title || img.name" loading="lazy" />
+                    <div class="gal-photo-overlay">
+                        <span class="gal-photo-title">{{img.title || img.name}}</span>
+                        <div class="gal-photo-actions">
+                            <button class="gal-action-btn" (click)="openLightbox(img)" title="View">🔍</button>
+                            <button class="gal-action-btn" (click)="downloadItem(img, $event)"
+                                title="Download">⬇️</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- LIGHTBOX -->
+<div class="lightbox-overlay" *ngIf="lightboxItem" (click)="closeLightbox()">
+    <div class="lightbox-box" (click)="$event.stopPropagation()">
+        <button class="lightbox-close" (click)="closeLightbox()">✕</button>
+        <div class="lightbox-media">
+            <img *ngIf="lightboxItem.mediaType === 'image'" [src]="lightboxItem.secureUrl || lightboxItem.url"
+                [alt]="lightboxItem.title" />
+            <video *ngIf="lightboxItem.mediaType === 'video'" [src]="lightboxItem.secureUrl || lightboxItem.url"
+                controls autoplay></video>
+        </div>
+        <div class="lightbox-footer">
+            <div class="lb-info">
+                <span class="lb-title">{{lightboxItem.title || lightboxItem.name}}</span>
+                <span class="badge badge-purple lb-section">{{lightboxItem.section}}</span>
+            </div>
+            <button class="btn btn-primary btn-sm" (click)="downloadItem(lightboxItem)">⬇️ Download</button>
+        </div>
+    </div>
+</div>

@@ -30,7 +30,9 @@
                 </div>
                 <div class="event-actions">
                     <button class="btn btn-primary btn-sm" (click)="openEventDetail(event)">View Details</button>
-                    <button class="btn btn-secondary btn-sm" (click)="registerForEvent(event._id)">Register →</button>
+                    <span class="badge badge-green registered-badge" *ngIf="isRegistered(event._id)">✅ Registered</span>
+                    <button class="btn btn-secondary btn-sm" *ngIf="!isRegistered(event._id)"
+                        (click)="registerForEvent(event._id)">Register →</button>
                 </div>
             </div>
         </div>
@@ -60,12 +62,25 @@
             </div>
             <div class="alert alert-error" *ngIf="registerError">{{registerError}}</div>
             <div class="alert alert-success" *ngIf="registerMessage">{{registerMessage}}</div>
+            <!-- Already registered state inside modal -->
+            <div class="already-registered-info" *ngIf="isRegistered(selectedEvent._id)">
+                <span class="badge badge-green">✅ You are registered for this event!</span>
+            </div>
         </div>
         <div class="modal-footer">
-            <button class="btn btn-primary" (click)="registerForEvent(selectedEvent._id)" [disabled]="loading">
+            <!-- If logged in and registered — show registered state -->
+            <span *ngIf="isRegistered(selectedEvent._id)" class="badge badge-green modal-registered">
+                ✅ Already Registered
+            </span>
+            <!-- If logged in, not registered — show register button -->
+            <button class="btn btn-primary" *ngIf="!isRegistered(selectedEvent._id) && auth.isLoggedIn"
+                (click)="registerForEvent(selectedEvent._id)" [disabled]="loading">
                 {{loading ? 'Registering...' : 'Register for this Event →'}}
             </button>
+            <!-- If not logged in — show login prompt -->
             <a routerLink="/login" class="btn btn-secondary" *ngIf="!auth.isLoggedIn">Login to Register</a>
+            <a routerLink="/student-dashboard" class="btn btn-secondary btn-sm"
+                *ngIf="isRegistered(selectedEvent._id)">View in Dashboard</a>
         </div>
     </div>
 </div>

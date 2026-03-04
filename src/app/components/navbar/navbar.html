@@ -9,10 +9,12 @@
     </a>
 
     <ul class="nav-links" [class.mobile-open]="isMobileMenuOpen">
-      <li><a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}" (click)="closeMobile()">Home</a></li>
+      <li><a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}"
+          (click)="closeMobile()">Home</a></li>
       <li><a routerLink="/about" routerLinkActive="active" (click)="closeMobile()">About</a></li>
       <li><a routerLink="/courses" routerLinkActive="active" (click)="closeMobile()">Courses</a></li>
       <li><a routerLink="/events" routerLinkActive="active" (click)="closeMobile()">Events</a></li>
+      <li><a routerLink="/gallery" routerLinkActive="active" (click)="closeMobile()">Gallery</a></li>
       <li *ngIf="!currentUser">
         <a routerLink="/register" routerLinkActive="active" (click)="closeMobile()">Register</a>
       </li>

@@ -13,10 +13,12 @@
                 Dashboard</button>
             <button class="sb-link" [class.active]="activeTab === 'students'" (click)="setTab('students')">👩‍🎓
                 Students</button>
+            <button class="sb-link" [class.active]="activeTab === 'attendance'" (click)="setTab('attendance')">📅
+                Attendance</button>
             <button class="sb-link" [class.active]="activeTab === 'events'" (click)="setTab('events')">🎪
                 Events</button>
             <button class="sb-link" [class.active]="activeTab === 'payments'" (click)="setTab('payments')">💳
-                Payments</button>
+                Fees</button>
             <button class="sb-link" [class.active]="activeTab === 'gallery'" (click)="setTab('gallery')">🖼️
                 Gallery</button>
             <button class="sb-link" (click)="exportStudents()">⬇️ Export CSV</button>
@@ -27,11 +29,15 @@
     <!-- MAIN -->
     <main class="dash-content">
         <div class="alert alert-success" *ngIf="successMsg">{{successMsg}}</div>
+        <div class="alert alert-error" *ngIf="errorMsg">{{errorMsg}}</div>
 
-        <!-- STATS TAB -->
+        <!-- ══════════════ STATS TAB ══════════════ -->
         <div *ngIf="activeTab === 'stats'">
             <div class="dash-header">
                 <h2>Admin <span class="gradient-text">Dashboard</span></h2>
+            </div>
+            <div *ngIf="!stats" class="empty-state"><span>⏳</span>
+                <p>Loading statistics...</p>
             </div>
             <div class="admin-stats-grid" *ngIf="stats">
                 <div class="asc glass-card">
@@ -57,6 +63,7 @@
             </div>
             <div class="batch-overview glass-card" *ngIf="stats">
                 <h4>Students by Dance Style</h4>
+                <div *ngIf="stats.danceTypeStats.length === 0" class="empty-hint">No data yet.</div>
                 <div class="dance-stat-row" *ngFor="let d of stats.danceTypeStats">
                     <span class="ds-label">{{d._id || 'Unassigned'}}</span>
                     <div class="ds-bar-track">
@@ -67,14 +74,12 @@
             </div>
         </div>
 
-        <!-- STUDENTS TAB (Enhanced) -->
+        <!-- ══════════════ STUDENTS TAB ══════════════ -->
         <div *ngIf="activeTab === 'students'">
             <div class="dash-header">
                 <h2>Manage <span class="gradient-text">Students</span></h2>
                 <span class="badge badge-purple">{{filteredStudents.length}} of {{students.length}}</span>
             </div>
-
-            <!-- Search bar -->
             <div class="student-search-bar glass-card">
                 <span class="search-icon">🔍</span>
                 <input id="student-search" class="search-input" type="text"
@@ -82,7 +87,6 @@
                 <button class="btn btn-secondary btn-sm" *ngIf="studentFilter" (click)="studentFilter = ''">✕
                     Clear</button>
             </div>
-
             <div class="glass-card table-card">
                 <table class="data-table">
                     <thead>
@@ -96,7 +100,6 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- NORMAL ROW -->
                         <tr *ngFor="let s of filteredStudents" [class.editing-row]="editingStudentId === s._id">
                             <ng-container *ngIf="editingStudentId !== s._id">
                                 <td>
@@ -125,7 +128,6 @@
                                     </div>
                                 </td>
                             </ng-container>
-                            <!-- INLINE EDIT ROW -->
                             <ng-container *ngIf="editingStudentId === s._id">
                                 <td colspan="6">
                                     <div class="inline-edit-row">
@@ -134,6 +136,9 @@
                                                 [(ngModel)]="editStudentData.name" />
                                             <input class="form-control form-control-sm" placeholder="Phone"
                                                 [(ngModel)]="editStudentData.phone" />
+                                            <input class="form-control form-control-sm"
+                                                placeholder="Batch (e.g. 6:00 PM)"
+                                                [(ngModel)]="editStudentData.batchTiming" />
                                             <select class="form-control form-control-sm"
                                                 [(ngModel)]="editStudentData.danceType">
                                                 <option>Classical</option>
@@ -166,7 +171,122 @@
             </div>
         </div>
 
-        <!-- EVENTS TAB -->
+        <!-- ══════════════ ATTENDANCE TAB ══════════════ -->
+        <div *ngIf="activeTab === 'attendance'">
+            <div class="dash-header">
+                <h2>Mark <span class="gradient-text">Attendance</span></h2>
+                <button class="btn btn-primary btn-sm" (click)="showAttendanceForm = !showAttendanceForm">
+                    {{showAttendanceForm ? '✕ Close' : '+ Mark Attendance'}}
+                </button>
+            </div>
+
+            <!-- Mark Attendance Form -->
+            <div class="add-event-form glass-card" *ngIf="showAttendanceForm">
+                <h4>📅 Mark Student Attendance</h4>
+                <div class="form-row2">
+                    <div class="form-group">
+                        <label class="form-label">Student *</label>
+                        <select class="form-control" [(ngModel)]="attendanceStudentId">
+                            <option value="">— Select Student —</option>
+                            <option *ngFor="let s of students" [value]="s._id">{{s.name}} ({{s.danceType || 'No style'}}
+                                · {{s.batchTiming || 'No batch'}})</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Date *</label>
+                        <input class="form-control" type="date" [(ngModel)]="attendanceDate" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Status</label>
+                    <div class="attendance-status-btns">
+                        <button
+                            [class]="'att-btn ' + (attendanceStatus === 'Present' ? 'att-present active' : 'att-present')"
+                            (click)="attendanceStatus = 'Present'">✅ Present</button>
+                        <button
+                            [class]="'att-btn ' + (attendanceStatus === 'Absent' ? 'att-absent active' : 'att-absent')"
+                            (click)="attendanceStatus = 'Absent'">❌ Absent</button>
+                        <button [class]="'att-btn ' + (attendanceStatus === 'Late' ? 'att-late active' : 'att-late')"
+                            (click)="attendanceStatus = 'Late'">⏰ Late</button>
+                    </div>
+                </div>
+                <div class="form-actions-row">
+                    <button class="btn btn-primary btn-sm" (click)="markAttendance()">✅ Mark Attendance</button>
+                    <span class="batch-hint">Or mark all at once:</span>
+                    <button class="btn btn-secondary btn-sm" (click)="markAllAttendance('Present')">Mark All
+                        Present</button>
+                    <button class="btn btn-secondary btn-sm" (click)="markAllAttendance('Absent')">Mark All
+                        Absent</button>
+                </div>
+            </div>
+
+            <!-- Filter Attendance Records -->
+            <div class="glass-card attendance-filter-row">
+                <div class="af-group">
+                    <label class="form-label">Filter by Student</label>
+                    <select class="form-control form-control-sm" [(ngModel)]="attendanceStudentFilter"
+                        (change)="filterAttendance()">
+                        <option value="">All Students</option>
+                        <option *ngFor="let s of students" [value]="s._id">{{s.name}}</option>
+                    </select>
+                </div>
+                <div class="af-group">
+                    <label class="form-label">Filter by Date</label>
+                    <input class="form-control form-control-sm" type="date" [(ngModel)]="attendanceDateFilter"
+                        (change)="filterAttendance()" />
+                </div>
+                <button class="btn btn-secondary btn-sm"
+                    (click)="attendanceStudentFilter=''; attendanceDateFilter=''; loadAttendance()">Clear
+                    Filters</button>
+            </div>
+
+            <!-- Attendance Table -->
+            <div class="glass-card table-card">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Student</th>
+                            <th>Dance Style</th>
+                            <th>Batch</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Marked By</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let r of attendanceRecords">
+                            <td>
+                                <div class="student-cell">
+                                    <div class="student-avatar-sm">{{r.student?.name?.charAt(0)}}</div>
+                                    <strong>{{r.student?.name || '—'}}</strong>
+                                </div>
+                            </td>
+                            <td><span class="badge badge-purple">{{r.student?.danceType || r.danceType || '—'}}</span>
+                            </td>
+                            <td>{{r.student?.batchTiming || r.batchTiming || '—'}}</td>
+                            <td>{{r.date | date:'EEE, MMM dd yyyy'}}</td>
+                            <td>
+                                <span
+                                    [class]="'badge ' + (r.status === 'Present' ? 'badge-green' : r.status === 'Late' ? 'badge-gold' : 'badge-red')">
+                                    {{r.status}}
+                                </span>
+                            </td>
+                            <td>{{r.markedBy?.name || 'System'}}</td>
+                            <td>
+                                <button class="btn btn-danger btn-sm" (click)="deleteAttendance(r._id)">🗑️</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="empty-state" *ngIf="attendanceRecords.length === 0">
+                    <span>📅</span>
+                    <p>No attendance records found. Use the form above to mark attendance.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══════════════ EVENTS TAB ══════════════ -->
         <div *ngIf="activeTab === 'events'">
             <div class="dash-header">
                 <h2>Manage <span class="gradient-text">Events</span></h2>
@@ -228,14 +348,73 @@
                         </tr>
                     </tbody>
                 </table>
+                <div class="empty-state" *ngIf="events.length === 0"><span>🎪</span>
+                    <p>No events created yet.</p>
+                </div>
             </div>
         </div>
 
-        <!-- PAYMENTS TAB -->
+        <!-- ══════════════ PAYMENTS / FEES TAB ══════════════ -->
         <div *ngIf="activeTab === 'payments'">
             <div class="dash-header">
-                <h2>View <span class="gradient-text">Payments</span></h2>
+                <h2>Manage <span class="gradient-text">Fees</span></h2>
+                <button class="btn btn-primary btn-sm" (click)="showAddPayment = !showAddPayment">{{showAddPayment ? '✕
+                    Cancel' : '+ Add Fee Record'}}</button>
             </div>
+
+            <!-- Add Payment Form -->
+            <div class="add-event-form glass-card" *ngIf="showAddPayment">
+                <h4>💳 Create Fee Record</h4>
+                <div class="form-row2">
+                    <div class="form-group">
+                        <label class="form-label">Student *</label>
+                        <select class="form-control" [(ngModel)]="newPayment.student">
+                            <option value="">— Select Student —</option>
+                            <option *ngFor="let s of students" [value]="s._id">{{s.name}} ({{s.danceType || 'N/A'}})
+                            </option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Month *</label>
+                        <select class="form-control" [(ngModel)]="newPayment.month">
+                            <option value="">— Select Month —</option>
+                            <option *ngFor="let m of months">{{m}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row2">
+                    <div class="form-group">
+                        <label class="form-label">Year</label>
+                        <input class="form-control" type="number" [(ngModel)]="newPayment.year" />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Amount (₹)</label>
+                        <input class="form-control" type="number" [(ngModel)]="newPayment.amount" />
+                    </div>
+                </div>
+                <div class="form-row2">
+                    <div class="form-group">
+                        <label class="form-label">Status</label>
+                        <select class="form-control" [(ngModel)]="newPayment.status">
+                            <option>Pending</option>
+                            <option>Paid</option>
+                            <option>Overdue</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Payment Method</label>
+                        <select class="form-control" [(ngModel)]="newPayment.paymentMethod">
+                            <option>Cash</option>
+                            <option>UPI</option>
+                            <option>Card</option>
+                            <option>Bank Transfer</option>
+                        </select>
+                    </div>
+                </div>
+                <button class="btn btn-primary btn-sm" (click)="createPayment()">Create Fee Record →</button>
+            </div>
+
+            <!-- Payments Table -->
             <div class="glass-card table-card">
                 <table class="data-table">
                     <thead>
@@ -255,43 +434,69 @@
                             <td>{{p.month}} {{p.year}}</td>
                             <td>₹{{p.amount}}</td>
                             <td>{{p.paymentMethod}}</td>
-                            <td><span
+                            <td>
+                                <span
                                     [class]="'badge ' + (p.status === 'Paid' ? 'badge-green' : p.status === 'Overdue' ? 'badge-red' : 'badge-gold')">{{p.status}}</span>
                             </td>
                             <td>
-                                <div class="action-btns" *ngIf="p.status !== 'Paid'">
-                                    <button class="btn btn-primary btn-sm" (click)="markPayment(p, 'Paid')">Mark
-                                        Paid</button>
+                                <div class="action-btns">
+                                    <button class="btn btn-primary btn-sm" *ngIf="p.status !== 'Paid'"
+                                        (click)="markPayment(p, 'Paid')">Mark Paid</button>
+                                    <button class="btn btn-secondary btn-sm" *ngIf="p.status === 'Paid'"
+                                        (click)="markPayment(p, 'Pending')">Mark Pending</button>
+                                    <button class="btn btn-danger btn-sm"
+                                        (click)="deletePaymentRecord(p._id)">🗑️</button>
                                 </div>
-                                <span class="check" *ngIf="p.status === 'Paid'">✅</span>
                             </td>
                         </tr>
                     </tbody>
                 </table>
                 <div class="empty-state" *ngIf="payments.length === 0"><span>💳</span>
-                    <p>No payment records found.</p>
+                    <p>No payment records found. Create one above.</p>
                 </div>
             </div>
         </div>
 
-        <!-- GALLERY TAB -->
+        <!-- ══════════════ GALLERY TAB ══════════════ -->
         <div *ngIf="activeTab === 'gallery'">
             <div class="dash-header">
                 <h2>Media <span class="gradient-text">Gallery</span></h2>
                 <span class="badge badge-purple">{{galleryItems.length}} items</span>
             </div>
 
-            <!-- Upload dropzone -->
-            <div class="gallery-dropzone glass-card" (dragover)="onDragOver($event)" (drop)="onDrop($event)">
-                <input id="gallery-upload-input" type="file" accept="image/*,video/*" multiple style="display:none"
-                    (change)="onGalleryFilesSelected($event)" #galleryInput />
-                <div class="dropzone-icon">{{uploading ? '⏳' : '📁'}}</div>
-                <h4>{{uploading ? 'Uploading...' : 'Drag & Drop Media Here'}}</h4>
-                <p>Images (JPG, PNG, GIF, WEBP) and Videos (MP4, MOV, AVI) supported</p>
-                <button id="gallery-browse-btn" class="btn btn-primary btn-sm" (click)="galleryInput.click()"
-                    [disabled]="uploading">
-                    {{uploading ? '⏳ Processing...' : '📂 Browse Files'}}
-                </button>
+            <!-- Upload Section -->
+            <div class="gallery-upload-card glass-card">
+                <h4>📤 Upload Media</h4>
+                <div class="form-row2">
+                    <div class="form-group">
+                        <label class="form-label">Section / Category</label>
+                        <select class="form-control" [(ngModel)]="uploadSection">
+                            <option *ngFor="let s of gallerySections.slice(1)">{{s}}</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Title (optional)</label>
+                        <input class="form-control" placeholder="e.g. Annual Day 2026" [(ngModel)]="uploadTitle" />
+                    </div>
+                </div>
+                <div class="gallery-dropzone" (dragover)="onDragOver($event)" (drop)="onDrop($event)">
+                    <input id="gallery-upload-input" type="file" accept="image/*,video/*" multiple style="display:none"
+                        (change)="onGalleryFilesSelected($event)" #galleryInput />
+                    <div class="dropzone-icon">{{uploading ? '⏳' : '📁'}}</div>
+                    <h4>{{uploading ? 'Uploading...' : 'Drag & Drop Media Here'}}</h4>
+                    <p>Images (JPG, PNG, GIF, WEBP) and Videos (MP4, MOV, AVI) — Max 100MB</p>
+                    <button id="gallery-browse-btn" class="btn btn-primary btn-sm" (click)="galleryInput.click()"
+                        [disabled]="uploading">
+                        {{uploading ? '⏳ Processing...' : '📂 Browse Files'}}
+                    </button>
+                </div>
+            </div>
+
+            <!-- Gallery Section Filter -->
+            <div class="gallery-section-tabs glass-card">
+                <button *ngFor="let s of gallerySections"
+                    [class]="'section-tab-btn ' + (galleryFilter === s ? 'active' : '')"
+                    (click)="filterGallery(s)">{{s}}</button>
             </div>
 
             <!-- Gallery Grid -->
@@ -302,20 +507,19 @@
                         <video *ngIf="item.mediaType === 'video'" [src]="item.secureUrl || item.url" controls></video>
                     </div>
                     <div class="gm-info">
-                        <span class="gm-name" [title]="item.name">{{item.name}}</span>
+                        <span class="gm-name" [title]="item.title || item.name">{{item.title || item.name}}</span>
                         <div class="gm-meta">
                             <span class="badge badge-blue">{{item.mediaType}}</span>
+                            <span class="badge badge-purple">{{item.section}}</span>
                             <span class="gm-date">{{item.createdAt | date:'dd MMM yyyy'}}</span>
                         </div>
                     </div>
-                    <button class="gm-remove" (click)="removeGalleryItem(item)"
-                        title="Delete from Cloudinary">✕</button>
+                    <button class="gm-remove" (click)="removeGalleryItem(item)" title="Delete">✕</button>
                 </div>
             </div>
-
             <div class="empty-state" *ngIf="galleryItems.length === 0 && !uploading">
                 <span>🖼️</span>
-                <p>No media uploaded yet. Use the upload area above to add photos and videos for the gallery.</p>
+                <p>No media in "{{galleryFilter}}" section. Upload files above.</p>
             </div>
         </div>
     </main>

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { EventService } from '../../services/event';
 import { AuthService } from '../../services/auth';
+import { StudentService } from '../../services/student';
 
 @Component({
   selector: 'app-events',
@@ -12,29 +13,61 @@ import { AuthService } from '../../services/auth';
 })
 export class Events implements OnInit {
   events: any[] = [];
+  registeredEventIds: Set<string> = new Set();
   selectedEvent: any = null;
   registerMessage = '';
   registerError = '';
   loading = false;
 
-  constructor(private eventService: EventService, public auth: AuthService) { }
+  constructor(
+    private eventService: EventService,
+    public auth: AuthService,
+    private studentService: StudentService
+  ) { }
 
   ngOnInit() {
     this.eventService.getAll().subscribe({
       next: (data: any) => this.events = data,
       error: () => this.events = this.getMockEvents()
     });
+
+    // If logged in as student, load registered events to show "Registered" state
+    if (this.auth.isLoggedIn && this.auth.isStudent) {
+      this.studentService.getMyEvents().subscribe({
+        next: (data: any) => {
+          this.registeredEventIds = new Set(data.map((e: any) => e._id));
+        },
+        error: () => { }
+      });
+    }
   }
 
-  openEventDetail(event: any) { this.selectedEvent = event; this.registerMessage = ''; this.registerError = ''; }
+  isRegistered(eventId: string): boolean {
+    return this.registeredEventIds.has(eventId);
+  }
+
+  openEventDetail(event: any) {
+    this.selectedEvent = event;
+    this.registerMessage = '';
+    this.registerError = '';
+  }
   closeModal() { this.selectedEvent = null; }
 
   registerForEvent(eventId: string) {
     if (!this.auth.isLoggedIn) { this.registerError = 'Please login first to register for events.'; return; }
+    if (this.isRegistered(eventId)) { this.registerError = 'You are already registered for this event!'; return; }
     this.loading = true;
+    this.registerError = '';
     this.eventService.register(eventId).subscribe({
-      next: () => { this.registerMessage = '✅ Successfully registered!'; this.loading = false; },
-      error: (err) => { this.registerError = err.error?.message || 'Registration failed. Please try again.'; this.loading = false; }
+      next: () => {
+        this.registeredEventIds.add(eventId);
+        this.registerMessage = '✅ Successfully registered! Check your dashboard.';
+        this.loading = false;
+      },
+      error: (err) => {
+        this.registerError = err.error?.message || 'Registration failed. Please try again.';
+        this.loading = false;
+      }
     });
   }
 
