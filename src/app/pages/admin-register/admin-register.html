@@ -1,0 +1,68 @@
+<section class="register-page">
+    <div class="orb orb-purple" style="width:500px;height:500px;top:-200px;left:-200px;"></div>
+    <div class="orb orb-pink" style="width:400px;height:400px;bottom:-150px;right:-150px;"></div>
+    <div class="container">
+        <div class="register-wrapper">
+            <div class="register-left" style="background: linear-gradient(135deg, rgba(30, 0, 80, 0.8), rgba(0, 0, 40, 0.9));">
+                <div class="section-label">⚙️ Admin Portal</div>
+                <h1>Join as <span class="gradient-text">Admin</span></h1>
+                <p>Register as an administrator to manage students, events, fees, and attendance at Rhythm Academy.</p>
+                <div class="register-features">
+                    <div class="rf-item"><span>👥</span> Manage Student Records</div>
+                    <div class="rf-item"><span>📅</span> Create & Track Events</div>
+                    <div class="rf-item"><span>✅</span> Mark Daily Attendance</div>
+                    <div class="rf-item"><span>💳</span> Monitor Fee Submissions</div>
+                </div>
+            </div>
+
+            <div class="register-form glass-card">
+                <div class="alert alert-error" *ngIf="error">{{error}}</div>
+                <div class="alert alert-success" *ngIf="success">{{success}}</div>
+
+                <h3 class="step-title">Admin Registration</h3>
+                <div class="form-group">
+                    <label class="form-label">Full Name *</label>
+                    <input id="admin-reg-name" class="form-control" type="text" placeholder="Your full name"
+                        [(ngModel)]="formData.name" name="name" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email Address *</label>
+                    <input id="admin-reg-email" class="form-control" type="email" placeholder="admin@danceacademy.com"
+                        [(ngModel)]="formData.email" name="email" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Phone Number</label>
+                    <input id="admin-reg-phone" class="form-control" type="tel" placeholder="10-digit mobile number"
+                        [(ngModel)]="formData.phone" name="phone" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Password *</label>
+                    <div class="input-eye-wrap">
+                        <input id="admin-reg-password" class="form-control" [type]="showPassword ? 'text' : 'password'"
+                            placeholder="Min 6 characters" [(ngModel)]="formData.password" name="password" />
+                        <button type="button" class="eye-btn" (click)="showPassword = !showPassword" tabindex="-1">
+                            <span>{{showPassword ? '🙈' : '👁️'}}</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Confirm Password *</label>
+                    <div class="input-eye-wrap">
+                        <input id="admin-reg-confirm" class="form-control"
+                            [type]="showConfirmPassword ? 'text' : 'password'" placeholder="Repeat password"
+                            [(ngModel)]="formData.confirmPassword" name="confirmPassword" />
+                        <button type="button" class="eye-btn" (click)="showConfirmPassword = !showConfirmPassword"
+                            tabindex="-1">
+                            <span>{{showConfirmPassword ? '🙈' : '👁️'}}</span>
+                        </button>
+                    </div>
+                </div>
+                <button id="admin-register-submit" class="btn btn-primary" style="width:100%; justify-content:center; margin-top:20px;" (click)="onSubmit()" [disabled]="loading">
+                    {{loading ? '⏳ Registering Admin...' : '🚀 Register as Admin'}}
+                </button>
+
+                <p class="login-link">Already an admin? <a routerLink="/login">Login here</a></p>
+            </div>
+        </div>
+    </div>
+</section>

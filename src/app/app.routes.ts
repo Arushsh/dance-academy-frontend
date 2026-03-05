@@ -4,6 +4,7 @@ import { About } from './pages/about/about';
 import { Courses } from './pages/courses/courses';
 import { Events } from './pages/events/events';
 import { Register } from './pages/register/register';
+import { AdminRegister } from './pages/admin-register/admin-register';
 import { Login } from './pages/login/login';
 import { StudentDashboard } from './pages/student-dashboard/student-dashboard';
 import { AdminDashboard } from './pages/admin-dashboard/admin-dashboard';
@@ -17,6 +18,7 @@ export const routes: Routes = [
     { path: 'events', component: Events },
     { path: 'gallery', component: GalleryPage },
     { path: 'register', component: Register },
+    { path: 'admin-register', component: AdminRegister },
     { path: 'login', component: Login },
     { path: 'student-dashboard', component: StudentDashboard, canActivate: [authGuard] },
     { path: 'admin-dashboard', component: AdminDashboard, canActivate: [authGuard] },

@@ -1,0 +1,87 @@
+.register-page {
+    min-height: 100vh;
+    padding: 120px 0 80px;
+    background: var(--gradient-hero);
+    position: relative;
+    overflow: hidden;
+}
+
+.register-wrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+    align-items: start;
+    position: relative;
+    z-index: 1;
+}
+
+.register-left {
+    border-radius: 24px;
+    padding: 48px;
+    color: #fff;
+    box-shadow: var(--shadow-xl);
+}
+
+.register-left h1 {
+    font-size: clamp(1.8rem, 3vw, 2.5rem);
+    margin: 16px 0 16px;
+}
+
+.register-left>p {
+    color: var(--text-secondary);
+    line-height: 1.8;
+    margin-bottom: 32px;
+}
+
+.register-features {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 40px;
+}
+
+.rf-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.rf-item span {
+    font-size: 1.2rem;
+}
+
+.register-form {
+    padding: 48px;
+}
+
+.step-title {
+    font-size: 1.3rem;
+    margin-bottom: 28px;
+}
+
+.login-link {
+    margin-top: 24px;
+    text-align: center;
+    font-size: 0.875rem;
+    color: var(--text-muted);
+}
+
+.login-link a {
+    color: var(--accent-purple);
+}
+
+@media (max-width: 768px) {
+    .register-wrapper {
+        grid-template-columns: 1fr;
+    }
+
+    .register-left {
+        display: none;
+    }
+
+    .register-form {
+        padding: 28px;
+    }
+}

@@ -38,6 +38,16 @@ export class AuthService {
     );
   }
 
+  registerAdmin(data: any): Observable<any> {
+    return this.http.post(`${this.BASE}/register-admin`, data).pipe(
+      tap((res: any) => this.storeAuth(res)),
+      catchError(err => {
+        console.error('Admin Registration error:', err);
+        return throwError(() => err);
+      })
+    );
+  }
+
   login(email: string, password: string): Observable<any> {
     return this.http.post(`${this.BASE}/login`, { email, password }).pipe(
       tap((res: any) => {
